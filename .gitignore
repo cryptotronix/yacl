@@ -1,18 +1,10 @@
 # Object files
 *.o
 *.ko
-*.obj
-*.elf
-
-# Precompiled Headers
-*.gch
-*.pch
 
 # Libraries
 *.lib
 *.a
-*.la
-*.lo
 
 # Shared objects (inc. Windows DLLs)
 *.dll
@@ -24,9 +16,55 @@
 *.exe
 *.out
 *.app
-*.i*86
-*.x86_64
-*.hex
+/configure
+/config.h.in
+/aclocal.m4
+/Makefile.in
+/depcomp
+/install-sh
+/missing
+/Makefile
+/config.h
+/config.log
+/config.status
 
-# Debug files
-*.dSYM/
+
+autom4te.cache/
+src/.deps/
+/src/.dirstamp
+/stamp-h1
+/config.h.in~
+/TAGS
+/compile
+.deps/
+
+*.dirstamp
+/libtool
+/ltmain.sh
+/ylwrap
+/config.guess
+/config.sub
+m4/
+*.lo
+lib/
+snippet/
+.libs/
+*.la
+*.pc
+/test/Makefile
+/test/Makefile.in
+/test/check_libcrypti2c
+/ar-lib
+/config.rpath
+/test/TAGS
+/test/check_libcryptoauth
+/test/csu
+/test/check_libcryptoauth.trs
+/test-driver
+/cov-int/
+/*.tar.gz
+/*.tgz
+/test/burnutil
+/test/payload.bin
+/test/ecdh
+/announce-gen
