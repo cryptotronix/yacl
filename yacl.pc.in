@@ -8,4 +8,4 @@ Description: Minimal crypto library
 Version: @PACKAGE_VERSION@
 URL: @PACKAGE_URL@
 Libs: -L${libdir} -lyacl
-Cflags: -I${includedir}/yacl-@YACL_API_VERSION@ -I${libdir}/yacl-@YACL_API_VERSION@/include
+Cflags: -I${includedir}/yacl-@YACL_API_VERSION@

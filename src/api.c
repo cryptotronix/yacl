@@ -1,6 +1,6 @@
 /* -*- mode: c; c-file-style: "gnu" -*- */
 #include "config.h"
-#include "../include/yacl.h"
+#include "../yacl.h"
 #include "hash/sha256.h"
 #include "ecc/uECC.h"
 

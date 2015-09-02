@@ -15,14 +15,16 @@ AM_YFLAGS = -d
 libyacl_la_SOURCES = src/ecc/uECC.h \
                      src/ecc/uECC.c \
                      src/hash/sha256.c \
-                     src/hash/sha256.h
+                     src/hash/sha256.h \
+                     src/api.c \
+                     yacl.h
 
 libyacl_la_LDFLAGS = -version-info $(YACL_SO_VERSION) -release $(YACL_API_VERSION)
 
 yacl_includedir = $(includedir)/yacl-$(YACL_API_VERSION)
-nobase_yacl_include_HEADERS = include/yacl.h
+nobase_yacl_include_HEADERS = yacl.h
 
-yacl_libincludedir = $(libdir)/yacl-$(YACL_API_VERSION)/include
+yacl_libincludedir = $(libdir)/yacl-$(YACL_API_VERSION)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = yacl.pc
