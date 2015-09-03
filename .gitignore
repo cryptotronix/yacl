@@ -69,3 +69,11 @@ snippet/
 /test/ecdh
 /announce-gen
 /test/ecc
+/test/ecc.log
+/test/ecc.trs
+/test/hmac
+/test/hmac.log
+/test/hmac.trs
+/test/hmac_result.log
+/test/test-suite.log
+/test/test_result.log
