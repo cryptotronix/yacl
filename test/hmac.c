@@ -58,7 +58,7 @@ END_TEST
 
 
 static Suite *
-witech2_suite(void)
+hmac_suite(void)
 {
     Suite *s;
     TCase *tc_core;
@@ -82,7 +82,7 @@ int main(void)
     Suite *s;
     SRunner *sr;
 
-    s = witech2_suite();
+    s = hmac_suite();
     sr = srunner_create(s);
 
     srunner_set_log (sr, "hmac_result.log");

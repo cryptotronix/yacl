@@ -318,7 +318,7 @@ END_TEST
 
 
 static Suite *
-witech2_suite(void)
+hkdf_suite(void)
 {
     Suite *s;
     TCase *tc_core;
@@ -344,7 +344,7 @@ int main(void)
     Suite *s;
     SRunner *sr;
 
-    s = witech2_suite();
+    s = hkdf_suite();
     sr = srunner_create(s);
 
     srunner_set_log (sr, "hkdf_result.log");
