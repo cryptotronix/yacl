@@ -6,3 +6,4 @@ compiler:
 before_install: sudo apt-get install check gnulib
 
 script: ./autogen.sh
+ - ./configure && make && make check
