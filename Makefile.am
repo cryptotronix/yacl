@@ -8,7 +8,7 @@ libyacl_la_CPPFLAGS = $(DEPS_CFLAGS)
 libyacl_la_LIBADD = $(DEPS_LIBS)
 lib_LTLIBRARIES = libyacl.la
 
-SUBDIRS = .
+SUBDIRS = . test
 
 AM_YFLAGS = -d
 
@@ -30,6 +30,3 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = yacl.pc
 
 dist_noinst_SCRIPTS = autogen.sh
-
-#TESTS = src/tests/test_cli.sh
-#EXTRA_DIST = src/tests/test_cli.sh

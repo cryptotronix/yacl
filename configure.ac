@@ -30,6 +30,8 @@ AC_SUBST([YACL_API_VERSION], [0.0])
 AC_DEFINE([uECC_CURVE], [uECC_secp256r1], [Use secp256r1 P-256])
 AC_DEFINE([uECC_ASM], [uECC_asm_fast], [Optimize for speed])
 
+#Check for check
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.8])
 
 # --enable-rpm copies the ni executable and the spec file to the dist package,
 # for use in building RPM packages. Requires rpm and rpmbuild.
@@ -60,7 +62,7 @@ AM_CONDITIONAL([BUILDING_DEB], [test "x$enable_deb" = xyes])
 
 # Override the template file name of the generated .pc file, so that there
 # is no need to rename the template file when the API version changes.
-AC_CONFIG_FILES([Makefile yacl.pc:yacl.pc.in])
+AC_CONFIG_FILES([Makefile test/Makefile yacl.pc:yacl.pc.in])
 
 AC_OUTPUT
 

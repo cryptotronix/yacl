@@ -68,3 +68,4 @@ snippet/
 /test/payload.bin
 /test/ecdh
 /announce-gen
+/test/ecc
