@@ -35,4 +35,9 @@ yacl_ecdsa_verify(const uint8_t public_key[YACL_P256_COORD_SIZE*2],
                   const uint8_t hash[YACL_P256_COORD_SIZE],
                   const uint8_t signature[YACL_P256_COORD_SIZE*2]);
 
+
+/* --- Utils --- */
+int
+yacl_memcmp_ct (const void *a, const void *b, size_t size);
+
 #endif

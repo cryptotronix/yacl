@@ -68,3 +68,19 @@ yacl_ecdsa_verify(const uint8_t public_key[YACL_P256_COORD_SIZE*2],
     return rc;
 
 }
+
+int
+yacl_memcmp_ct (const void *a, const void *b, size_t size)
+{
+  const uint8_t *ap = a;
+  const uint8_t *bp = b;
+  int rc = 0;
+  size_t i;
+
+  if (NULL == a || NULL == b) return -1;
+
+  for (i = 0; i < size; i++)
+    rc |= *ap++ ^ *bp++;
+
+  return rc;
+}
