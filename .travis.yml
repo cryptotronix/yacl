@@ -1,0 +1,8 @@
+language: c
+compiler:
+  - gcc
+  - clang
+# Change this to your needs
+before_install: sudo apt-get install check gnulib
+
+script: ./autogen.sh
