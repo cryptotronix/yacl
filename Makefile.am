@@ -16,6 +16,7 @@ libyacl_la_SOURCES = src/ecc/uECC.h \
                      src/ecc/uECC.c \
                      src/hash/sha256.c \
                      src/hash/sha256.h \
+                     src/hash/hkdf.c \
                      src/api.c \
                      yacl.h
 

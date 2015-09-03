@@ -77,3 +77,7 @@ snippet/
 /test/hmac_result.log
 /test/test-suite.log
 /test/test_result.log
+/test/hkdf
+/test/hkdf.log
+/test/hkdf.trs
+/test/hkdf_result.log
