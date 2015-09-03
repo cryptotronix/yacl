@@ -1,0 +1,8 @@
+Noteworthy changes in version 0.0 (Wednesday, 2 Sep 2015)
+----------------------------------------------------
+  * Initial version
+  * Algorithms available:
+  ** sha256, hmac256, hkdf256
+  ** ecdsa, ecdh for NIST P-256
+  * Utilities:
+  ** constant memcmp
