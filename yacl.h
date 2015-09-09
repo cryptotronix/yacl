@@ -93,8 +93,20 @@ yacl_ecdsa_verify(const uint8_t public_key[YACL_P256_COORD_SIZE*2],
                   const uint8_t signature[YACL_P256_COORD_SIZE*2]);
 
 
+int
+yacl_hash_ecdsa_sign(const uint8_t *data, size_t len,
+                     const uint8_t private_key[YACL_P256_COORD_SIZE],
+                     uint8_t signature[YACL_P256_COORD_SIZE*2]);
+
+int
+yacl_hash_verify(const uint8_t *data, size_t len,
+                 const uint8_t public_key[YACL_P256_COORD_SIZE*2],
+                 const uint8_t signature[YACL_P256_COORD_SIZE*2]);
+
 /* --- Utils --- */
 int
 yacl_memcmp_ct (const void *a, const void *b, size_t size);
 
+int
+yacl_get_random(uint8_t *dest, size_t size);
 #endif

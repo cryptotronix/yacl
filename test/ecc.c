@@ -48,8 +48,37 @@ START_TEST(t_test_curve)
 }
 END_TEST
 
+START_TEST(t_combined)
+{
+
+    uint8_t public_key[YACL_P256_COORD_SIZE*2];
+    uint8_t private_key[YACL_P256_COORD_SIZE];
+
+    int rc = yacl_create_key_pair(public_key, private_key);
+    ck_assert (rc == 0);
+
+    uint8_t data[] = {0x01, 0x02, 0x03};
+    uint8_t signature[YACL_P256_COORD_SIZE*2];
+
+    rc = yacl_hash_ecdsa_sign(data, sizeof(data),
+                              private_key, signature);
+
+    ck_assert (0 == rc);
+
+    rc = yacl_hash_verify (data, sizeof(data),
+                           public_key, signature);
+
+    ck_assert (0 == rc);
+
+    rc = yacl_hash_verify (data, sizeof(data - 1),
+                           public_key, signature);
+
+    ck_assert (0 != rc);
+}
+END_TEST
+
 static Suite *
-witech2_suite(void)
+ecc_suite(void)
 {
     Suite *s;
     TCase *tc_core;
@@ -61,6 +90,7 @@ witech2_suite(void)
 
     tcase_add_test(tc_core, t_ecc_kat);
     tcase_add_test(tc_core, t_test_curve);
+    tcase_add_test(tc_core, t_combined);
 
     suite_add_tcase(s, tc_core);
 
@@ -74,7 +104,7 @@ int main(void)
     Suite *s;
     SRunner *sr;
 
-    s = witech2_suite();
+    s = ecc_suite();
     sr = srunner_create(s);
 
     srunner_set_log (sr, "test_result.log");

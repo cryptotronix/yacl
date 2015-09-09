@@ -1,5 +1,8 @@
 /* -*- mode: c; c-file-style: "gnu" -*- */
 #include "config.h"
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "../yacl.h"
 #include "hash/sha256.h"
 #include "ecc/uECC.h"
@@ -81,6 +84,78 @@ yacl_memcmp_ct (const void *a, const void *b, size_t size)
 
   for (i = 0; i < size; i++)
     rc |= *ap++ ^ *bp++;
+
+  return rc;
+}
+
+int
+yacl_get_random(uint8_t *dest, size_t size)
+{
+  int fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
+  if (fd == -1)
+    {
+      fd = open("/dev/random", O_RDONLY | O_CLOEXEC);
+      if (fd == -1)
+        {
+          return fd;
+        }
+    }
+
+  char *ptr = (char *)dest;
+  size_t left = size;
+  while (left > 0)
+    {
+      ssize_t bytes_read = read(fd, ptr, left);
+      if (bytes_read <= 0)
+        {
+          close(fd);
+          return -1;
+        }
+      left -= bytes_read;
+      ptr += bytes_read;
+    }
+
+  close(fd);
+  return 0;
+}
+
+int
+yacl_hash_ecdsa_sign(const uint8_t *data, size_t len,
+                     const uint8_t private_key[YACL_P256_COORD_SIZE],
+                     uint8_t signature[YACL_P256_COORD_SIZE*2])
+{
+
+  int rc = -1;
+  uint8_t digest[YACL_SHA256_LEN];
+
+  if (NULL == data)
+    return rc;
+
+  rc = yacl_sha256 (data, len, digest);
+  if (rc) return rc;
+
+  rc = yacl_ecdsa_sign(private_key, digest, signature);
+
+  return rc;
+
+
+}
+
+int
+yacl_hash_verify(const uint8_t *data, size_t len,
+                 const uint8_t public_key[YACL_P256_COORD_SIZE*2],
+                 const uint8_t signature[YACL_P256_COORD_SIZE*2])
+{
+  int rc = -1;
+  uint8_t digest[YACL_SHA256_LEN];
+
+  if (NULL == data)
+    return rc;
+
+  rc = yacl_sha256 (data, len, digest);
+  if (rc) return rc;
+
+  rc = yacl_ecdsa_verify (public_key, digest, signature);
 
   return rc;
 }
