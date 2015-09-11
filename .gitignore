@@ -81,3 +81,8 @@ snippet/
 /test/hkdf.log
 /test/hkdf.trs
 /test/hkdf_result.log
+/test/util
+/test/util.log
+'
+/test/util.trs
+/test/util_result.log
