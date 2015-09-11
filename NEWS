@@ -1,3 +1,9 @@
+Noteworthy changes in version 0.2 (Friday, 11 Sep 2015)
+----------------------------------------------------
+  * Adds hash+sign/verify functions
+  * Fixes arm assembly compilation problem
+
+
 Noteworthy changes in version 0.1 (Thursday, 3 Sep 2015)
 ----------------------------------------------------
   * Adds get_random wrapper
