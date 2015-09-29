@@ -77,6 +77,37 @@ START_TEST(t_combined)
 }
 END_TEST
 
+START_TEST(t_ecdh)
+{
+    uint8_t alice_pub[YACL_P256_COORD_SIZE*2];
+    uint8_t bob_pub[YACL_P256_COORD_SIZE*2];
+
+    uint8_t alice_pri[YACL_P256_COORD_SIZE];
+    uint8_t bob_pri[YACL_P256_COORD_SIZE];
+
+    uint8_t alice_secret[YACL_P256_COORD_SIZE];
+    uint8_t bob_secret[YACL_P256_COORD_SIZE];
+
+    int rc;
+
+    rc = yacl_create_key_pair(alice_pub, alice_pri);
+
+    ck_assert (0 == rc);
+    rc = yacl_create_key_pair(bob_pub, bob_pri);
+    ck_assert (0 == rc);
+
+
+    rc = yacl_ecdh (bob_pub, alice_pri, alice_secret);
+
+    ck_assert (0 == rc);
+
+    rc = yacl_ecdh (alice_pub, bob_pri, bob_secret);
+    ck_assert (0 == rc);
+
+    ck_assert (0 == memcmp (alice_secret, bob_secret, YACL_P256_COORD_SIZE));
+}
+END_TEST
+
 static Suite *
 ecc_suite(void)
 {
@@ -91,6 +122,7 @@ ecc_suite(void)
     tcase_add_test(tc_core, t_ecc_kat);
     tcase_add_test(tc_core, t_test_curve);
     tcase_add_test(tc_core, t_combined);
+    tcase_add_test(tc_core, t_ecdh);
 
     suite_add_tcase(s, tc_core);
 

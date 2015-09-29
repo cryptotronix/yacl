@@ -159,3 +159,21 @@ yacl_hash_verify(const uint8_t *data, size_t len,
 
   return rc;
 }
+
+
+int
+yacl_ecdh (const uint8_t public_key[YACL_P256_COORD_SIZE*2],
+           const uint8_t private_key[YACL_P256_COORD_SIZE],
+           uint8_t secret[YACL_P256_COORD_SIZE])
+{
+  int rc;
+
+  rc = uECC_shared_secret(public_key, private_key, secret);
+
+  if (1 == rc)
+    rc = 0;
+  else
+    rc = 1;
+
+  return rc;
+}

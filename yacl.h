@@ -103,6 +103,11 @@ yacl_hash_verify(const uint8_t *data, size_t len,
                  const uint8_t public_key[YACL_P256_COORD_SIZE*2],
                  const uint8_t signature[YACL_P256_COORD_SIZE*2]);
 
+int
+yacl_ecdh (const uint8_t public_key[YACL_P256_COORD_SIZE*2],
+           const uint8_t private_key[YACL_P256_COORD_SIZE],
+           uint8_t secret[YACL_P256_COORD_SIZE]);
+
 /* --- Utils --- */
 int
 yacl_memcmp_ct (const void *a, const void *b, size_t size);

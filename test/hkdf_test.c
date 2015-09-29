@@ -192,6 +192,10 @@ START_TEST(t_hkdf_extract)
 
     ck_assert (0 == rc);
 
+    int i;
+    for (i = 0; i < sizeof(okm_kat); i++)
+        printf ("%02X", okm[i]);
+    printf ("\n");
 
     ck_assert (0 == memcmp (okm, okm_kat, L));
 
