@@ -1,3 +1,7 @@
+Noteworthy changes in version 0.3 (Tuesday, 29 Sep 2015)
+----------------------------------------------------
+  * Exposes ecdh call
+
 Noteworthy changes in version 0.2 (Friday, 11 Sep 2015)
 ----------------------------------------------------
   * Adds hash+sign/verify functions
