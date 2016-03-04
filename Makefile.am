@@ -6,6 +6,12 @@ ACLOCAL_AMFLAGS = -I m4
 
 libyacl_la_CPPFLAGS = $(DEPS_CFLAGS)
 libyacl_la_LIBADD = $(DEPS_LIBS)
+
+if HAVE_GUILE
+libyacl_la_CPPFLAGS += $(GUILE_CFLAGS)
+libyacl_la_LIBADD += $(GUILE_LIBS)
+endif
+
 lib_LTLIBRARIES = libyacl.la
 
 SUBDIRS = . test
@@ -20,6 +26,11 @@ libyacl_la_SOURCES = src/ecc/uECC.h \
                      src/hash/hkdf.c \
                      src/api.c \
                      yacl.h
+
+if HAVE_GUILE
+libyacl_la_SOURCES += src/guile/extension.c \
+                      src/guile/extension.h
+endif
 
 libyacl_la_LDFLAGS = -version-info $(YACL_SO_VERSION) -release $(YACL_API_VERSION)
 

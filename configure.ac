@@ -16,6 +16,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_PROG_CC
 AC_PROG_CC_C_O
 AM_PROG_CC_C_O
+AM_PROG_AR
 LT_INIT([static])
 AC_PROG_MKDIR_P
 
@@ -23,7 +24,7 @@ AC_PROG_MKDIR_P
 # For information on how to properly maintain the library version information,
 # refer to the libtool manual, section "Updating library version information":
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-AC_SUBST([YACL_SO_VERSION], [3:0:0])
+AC_SUBST([YACL_SO_VERSION], [4:0:1])
 AC_SUBST([YACL_API_VERSION], [0.3])
 
 # uECC settings
@@ -33,32 +34,17 @@ AC_DEFINE([uECC_ASM], [uECC_asm_fast], [Optimize for speed])
 #Check for check
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.8])
 
-# --enable-rpm copies the ni executable and the spec file to the dist package,
-# for use in building RPM packages. Requires rpm and rpmbuild.
-AC_ARG_ENABLE([rpm],
-        [AS_HELP_STRING([--enable-rpm=@<:@yes/no@:>@],
-                [Configure for building RPM package @<:@default=no@:>@ (requires rpm and rpmbuild)])],
-        [AS_IF([test "x$enable_rpm" = xyes],
-                      [AS_IF([test "x$RPMBUILD" = xnotfound],
-                                    [AC_MSG_ERROR([rpmbuild is required for --enable-rpm])],
-                      [test "x$RPM" = xnotfound],
-                                    [AC_MSG_ERROR([rpm is required for --enable-rpm])])])],
-        [enable_rpm=no])
-AM_CONDITIONAL(BUILDING_RPM, test "x$enable_rpm" = xyes)
+AC_ARG_WITH([guile],
+        AS_HELP_STRING([--with-guile], [Build the guile extensions]))
+AM_CONDITIONAL([HAVE_GUILE], [test "x$with_guile" = "xyes"])
 
-
-# --enable-deb copies only the ni executable to the dist package, for use in
-# building DEB packages.
-AC_ARG_ENABLE([deb],
-        [AS_HELP_STRING([--enable-deb=@<:@yes/no@:>@],
-                [Configure for building Debian package @<:@default=no@:>@ (requires dpkg-buildpackage)])],
-        [AS_IF([test "x$enable_deb" = xyes],
-                      [AS_IF([test "x$DEBUILD" = xnotfound],
-                                    [AC_MSG_ERROR([dpkg-buildpackage is required for --enable-deb])],
-                      [test "x$enable_rpm" = xyes],
-                             [AC_MSG_ERROR([--enable-rpm and --enable-deb are mutually exclusive])])])],
-        [enable_deb=no])
-AM_CONDITIONAL([BUILDING_DEB], [test "x$enable_deb" = xyes])
+AS_IF([test "x$with_guile" = "xyes"], [
+# Guile Extensions
+PKG_CHECK_MODULES([GUILE], [guile-2.0])
+GUILE_PROGS
+GUILE_FLAGS
+GUILE_SITE_DIR
+])
 
 # Override the template file name of the generated .pc file, so that there
 # is no need to rename the template file when the API version changes.
@@ -76,5 +62,5 @@ echo "
      Sys conf dir....: $sysconfdir
      Local state dir.: $localstatedir
      Pkg libexec dir.: $pkglibexecdir
-     Building Deb....: $enable_deb
+     Guile extensions: $with_guile
 "
