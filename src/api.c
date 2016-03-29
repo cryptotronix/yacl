@@ -21,20 +21,15 @@ yacl_hmac_sha256(const uint8_t *key, size_t key_len,
     return hmac_sha256(key, key_len, data, data_len, mac);
 }
 
-/* --- ECC functions ---*/
-
-#define YACL_P256_COORD_SIZE 32
-
 int
 yacl_create_key_pair(uint8_t public_key[YACL_P256_COORD_SIZE*2],
                      uint8_t private_key[YACL_P256_COORD_SIZE])
 {
     int rc;
     rc = uECC_make_key(public_key, private_key);
-    if (rc == 1)
-        return 0;
-    else
-        return 1;
+    rc = (rc == 1) ? 0 : 1;
+
+    return rc;
 }
 
 int
@@ -45,13 +40,8 @@ yacl_ecdsa_sign(const uint8_t private_key[YACL_P256_COORD_SIZE],
     int rc;
     rc = uECC_sign(private_key, message_hash, signature);
 
-    if (rc == 1)
-        return 0;
-    else
-        return 1;
-
+    rc = (rc == 1) ? 0 : 1;
     return rc;
-
 }
 
 int
