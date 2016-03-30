@@ -476,7 +476,7 @@ void uECC_set_rng(uECC_RNG_Function rng_function) {
         #include "asm_avr.inc"
     #endif
 
-    #if (uECC_ASM && (uECC_PLATFORM == uECC_arm || uECC_PLATFORM == uECC_arm_thumb || \
+    #if (uECC_ASM && WANT_ARM_ASM && (uECC_PLATFORM == uECC_arm || uECC_PLATFORM == uECC_arm_thumb ||     \
                       uECC_PLATFORM == uECC_arm_thumb2))
         #include "asm_arm.inc"
     #endif
