@@ -1,13 +1,16 @@
 #
 # Spec file for yacl
 #
+%define _prefix /usr
+%define _libdir %{_prefix}/lib64
+
 Name: yacl
-Version: 0.0.3
+Version: 0.3.6
 Release: 0
 Summary: yacl library
 License: see %{pkgdocdir}/copyright
 
-%define packagebase yacl-0.3
+%define packagebase yacl-0.3.6
 
 Group: System Environment/Libraries
 Source: %{packagebase}.tar.gz
@@ -38,15 +41,16 @@ This package contains static libraries to develop applications that use yacl.
 %setup -n %{packagebase}
 
 %build
-%configure
-make CFLAGS="$RPM_OPT_FLAGS"
+%configure --with-guile
+
+make %{?_smp_mflags}
 
 
 %install
 rm -rf %{buildroot}
 make install-strip DESTDIR=%{buildroot}
 # Clean out files that should not be part of the rpm.
-%{__rm} -f %{buildroot}%{_libdir}/%{name}/*.la
+%{__rm} -f %{buildroot}/usr/lib64/*.la
 
 
 %post
@@ -64,11 +68,12 @@ make install-strip DESTDIR=%{buildroot}
 
 %files
 %defattr( -, root, root )
-# %define _prefix /
-%{_libdir}/pkgconfig/yacl.pc
-%{_includedir}/*
-%{_libdir}/*.so
+#%define _prefix /
+/usr/lib64/pkgconfig/yacl.pc
+/usr/include/yacl-0.3/*
+/usr/lib64/*.so
+/usr/lib64/*.so.*
 
 %files static
 %defattr(-,root,root)
-%{_libdir}/*.a
+/usr/lib64/*.a
