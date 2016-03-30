@@ -1,0 +1,26 @@
+Source: yacl
+Priority: optional
+Maintainer: Josh Datko <jbd@cryptotronix.com>
+Build-Depends: debhelper (>= 9),
+               autotools-dev,
+               libglib2.0-dev,
+               pkg-config,
+               guile-2.0-dev
+Standards-Version: 3.9.5
+Section: libs
+Homepage: https://www.github.com/cryptotronix/yacl
+#Vcs-Git: git://anonscm.debian.org/collab-maint/yacl.git
+#Vcs-Browser: http://anonscm.debian.org/?p=collab-maint/yacl.git;a=summary
+
+Package: yacl-dev
+Section: libdevel
+Architecture: any
+Depends: yacl1 (= ${binary:Version}), ${misc:Depends}
+Description: yacl development package.
+ Small collection of crypto algorithms when OpenSSL is not needed/desired.
+
+Package: yacl1
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Small collection of crypto algorithms.
+ Small collection of crypto algorithms when OpenSSL is not needed/desired.

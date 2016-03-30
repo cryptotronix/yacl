@@ -1,0 +1,11 @@
+yacl (0.3.2-0ubuntu1) vivid; urgency=low
+
+  * Update for ubuntu packaging
+
+ -- Joshua Brian Datko <jbd@cryptotronix.com>  Tue, 29 Mar 2016 09:41:28 -0700
+ 
+yacl (0.3-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Josh Datko <jbd@cryptotronix.com>  Mon, 23 Nov 2015 09:41:28 -0700
