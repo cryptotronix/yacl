@@ -20,12 +20,15 @@ AM_YFLAGS = -d
 
 libyacl_la_SOURCES = src/ecc/uECC.h \
                      src/ecc/uECC.c \
-                     src/ecc/asm_arm.inc \
                      src/hash/sha256.c \
                      src/hash/sha256.h \
                      src/hash/hkdf.c \
                      src/api.c \
                      yacl.h
+
+if WANT_ARM
+libyacl_la_SOURCES += src/ecc/asm_arm.inc
+endif
 
 if HAVE_GUILE
 libyacl_la_SOURCES += src/guile/extension.c \

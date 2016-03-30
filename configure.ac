@@ -1,6 +1,6 @@
 # Copyright (C) 2014 Cryptotronix, LLC.
 
-AC_INIT([yacl], [0.3.2], [bugs@cryptotronix.com], [yacl],
+AC_INIT([yacl], [0.3.4], [bugs@cryptotronix.com], [yacl],
         [https://github.com/cryptotronix/yacl])
 AC_PREREQ([2.59])
 AC_USE_SYSTEM_EXTENSIONS
@@ -45,6 +45,11 @@ GUILE_PROGS
 GUILE_FLAGS
 GUILE_SITE_DIR
 ])
+
+AC_ARG_ENABLE([arm-asm],
+        AS_HELP_STRING([--enable-arm-asm], [Build with arm asm]))
+AM_CONDITIONAL([WANT_ARM], [test "x$enable_arm_asm" = "xyes"])
+
 
 # Override the template file name of the generated .pc file, so that there
 # is no need to rename the template file when the API version changes.
