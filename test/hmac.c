@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "../src/ecc/uECC.h"
 #include <stdio.h>
+#include <glib.h>
 
 #define NUM_TESTS 1
 
@@ -13,12 +14,7 @@ uint8_t *msg[NUM_TESTS];
 uint8_t *mac[NUM_TESTS];
 
 static void
-init_tests (void)
-{
-
-}
-
-START_TEST(t_hmac_kat)
+t_hmac_kat(void)
 {
 
     uint8_t key[] =
@@ -51,43 +47,16 @@ START_TEST(t_hmac_kat)
                           msg, sizeof(msg),
                           result);
 
-    ck_assert (0 == rc);
-    ck_assert (0 == memcmp (result, mac, sizeof(mac)));
-}
-END_TEST
-
-
-static Suite *
-hmac_suite(void)
-{
-    Suite *s;
-    TCase *tc_core;
-
-    s = suite_create("hmac");
-
-    /* Core test case */
-    tc_core = tcase_create("Core");
-
-    tcase_add_test(tc_core, t_hmac_kat);
-
-    suite_add_tcase(s, tc_core);
-
-    return s;
+    g_assert (0 == rc);
+    g_assert (0 == memcmp (result, mac, sizeof(mac)));
 }
 
 
-int main(void)
+int main(int argc, char *argv[])
 {
-    int number_failed;
-    Suite *s;
-    SRunner *sr;
+    g_test_init (&argc, &argv, NULL);
 
-    s = hmac_suite();
-    sr = srunner_create(s);
+    g_test_add_func ("/hmac/kat", t_hmac_kat);
 
-    srunner_set_log (sr, "hmac_result.log");
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed = srunner_ntests_failed(sr);
-    srunner_free(sr);
-    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return g_test_run ();
 }

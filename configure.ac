@@ -1,6 +1,6 @@
 # Copyright (C) 2014 Cryptotronix, LLC.
 
-AC_INIT([yacl], [0.3], [bugs@cryptotronix.com], [yacl],
+AC_INIT([yacl], [0.3.2], [bugs@cryptotronix.com], [yacl],
         [https://github.com/cryptotronix/yacl])
 AC_PREREQ([2.59])
 AC_USE_SYSTEM_EXTENSIONS
@@ -31,8 +31,8 @@ AC_SUBST([YACL_API_VERSION], [0.3])
 AC_DEFINE([uECC_CURVE], [uECC_secp256r1], [Use secp256r1 P-256])
 AC_DEFINE([uECC_ASM], [uECC_asm_fast], [Optimize for speed])
 
-#Check for check
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.8])
+#LIBGLIB for unit tests
+PKG_CHECK_MODULES([LIBGLIB], [glib-2.0])
 
 AC_ARG_WITH([guile],
         AS_HELP_STRING([--with-guile], [Build the guile extensions]))

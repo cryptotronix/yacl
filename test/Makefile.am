@@ -1,20 +1,20 @@
-# Copyright (C) 2014-2015 Cryptotronix, LLC.
+# Copyright (C) 2014-2016 Cryptotronix, LLC.
 
-TESTS = ecc hmac hkdf util
-check_PROGRAMS = ecc hmac hkdf util
+TESTS = ecc hmac util hkdf
+check_PROGRAMS = ecc hmac util hkdf
 
 ecc_SOURCES = ecc.c
-ecc_CFLAGS = @CHECK_CFLAGS@
-ecc_LDADD = ../libyacl.la @CHECK_LIBS@
+ecc_CFLAGS = $(LIBGLIB_CFLAGS)
+ecc_LDADD = ../libyacl.la $(LIBGLIB_LIBS)
 
 hmac_SOURCES = hmac.c
-hmac_CFLAGS = @CHECK_CFLAGS@
-hmac_LDADD = ../libyacl.la @CHECK_LIBS@
+hmac_CFLAGS = $(LIBGLIB_CFLAGS)
+hmac_LDADD = ../libyacl.la $(LIBGLIB_LIBS)
 
 hkdf_SOURCES = hkdf_test.c
-hkdf_CFLAGS = @CHECK_CFLAGS@
-hkdf_LDADD = ../libyacl.la @CHECK_LIBS@
+hkdf_CFLAGS = $(LIBGLIB_CFLAGS)
+hkdf_LDADD = ../libyacl.la $(LIBGLIB_LIBS)
 
 util_SOURCES = util.c
-util_CFLAGS = @CHECK_CFLAGS@
-util_LDADD = ../libyacl.la @CHECK_LIBS@
+util_CFLAGS = $(LIBGLIB_CFLAGS)
+util_LDADD = ../libyacl.la $(LIBGLIB_LIBS)

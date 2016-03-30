@@ -43,3 +43,5 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = yacl.pc
 
 dist_noinst_SCRIPTS = autogen.sh
+
+EXTRA_DIST =  rpm/yacl.spec

@@ -5,8 +5,11 @@
 #include <assert.h>
 #include "../src/ecc/uECC.h"
 #include <stdio.h>
+#include <glib.h>
 
-START_TEST(t_ecc_kat)
+
+static void
+t_ecc_kat(void)
 {
 
     /* test vector from Suite B Implementer Guide to FIPS 186-3 */
@@ -38,24 +41,27 @@ START_TEST(t_ecc_kat)
 
     rc = yacl_ecdsa_verify(pub, dig, sig);
 
-}
-END_TEST
+    g_assert (0 == rc);
 
-START_TEST(t_test_curve)
+}
+
+static void
+t_test_curve(void)
 {
-    ck_assert (uECC_secp256r1 ==  uECC_curve());
+    g_assert (uECC_secp256r1 ==  uECC_curve());
 
 }
-END_TEST
 
-START_TEST(t_combined)
+
+static void
+t_combined(void)
 {
 
     uint8_t public_key[YACL_P256_COORD_SIZE*2];
     uint8_t private_key[YACL_P256_COORD_SIZE];
 
     int rc = yacl_create_key_pair(public_key, private_key);
-    ck_assert (rc == 0);
+    g_assert (rc == 0);
 
     uint8_t data[] = {0x01, 0x02, 0x03};
     uint8_t signature[YACL_P256_COORD_SIZE*2];
@@ -63,21 +69,21 @@ START_TEST(t_combined)
     rc = yacl_hash_ecdsa_sign(data, sizeof(data),
                               private_key, signature);
 
-    ck_assert (0 == rc);
+    g_assert (0 == rc);
 
     rc = yacl_hash_verify (data, sizeof(data),
                            public_key, signature);
 
-    ck_assert (0 == rc);
+    g_assert (0 == rc);
 
     rc = yacl_hash_verify (data, sizeof(data - 1),
                            public_key, signature);
 
-    ck_assert (0 != rc);
+    g_assert (0 != rc);
 }
-END_TEST
 
-START_TEST(t_ecdh)
+static void
+t_ecdh(void)
 {
     uint8_t alice_pub[YACL_P256_COORD_SIZE*2];
     uint8_t bob_pub[YACL_P256_COORD_SIZE*2];
@@ -92,56 +98,30 @@ START_TEST(t_ecdh)
 
     rc = yacl_create_key_pair(alice_pub, alice_pri);
 
-    ck_assert (0 == rc);
+    g_assert (0 == rc);
     rc = yacl_create_key_pair(bob_pub, bob_pri);
-    ck_assert (0 == rc);
+    g_assert (0 == rc);
 
 
     rc = yacl_ecdh (bob_pub, alice_pri, alice_secret);
 
-    ck_assert (0 == rc);
+    g_assert (0 == rc);
 
     rc = yacl_ecdh (alice_pub, bob_pri, bob_secret);
-    ck_assert (0 == rc);
+    g_assert (0 == rc);
 
-    ck_assert (0 == memcmp (alice_secret, bob_secret, YACL_P256_COORD_SIZE));
-}
-END_TEST
-
-static Suite *
-ecc_suite(void)
-{
-    Suite *s;
-    TCase *tc_core;
-
-    s = suite_create("ecc");
-
-    /* Core test case */
-    tc_core = tcase_create("Core");
-
-    tcase_add_test(tc_core, t_ecc_kat);
-    tcase_add_test(tc_core, t_test_curve);
-    tcase_add_test(tc_core, t_combined);
-    tcase_add_test(tc_core, t_ecdh);
-
-    suite_add_tcase(s, tc_core);
-
-    return s;
+    g_assert (0 == memcmp (alice_secret, bob_secret, YACL_P256_COORD_SIZE));
 }
 
 
-int main(void)
+int main(int argc, char *argv[])
 {
-    int number_failed;
-    Suite *s;
-    SRunner *sr;
+    g_test_init (&argc, &argv, NULL);
 
-    s = ecc_suite();
-    sr = srunner_create(s);
+    g_test_add_func ("/ecc/curve", t_test_curve);
+    g_test_add_func ("/ecc/kat", t_ecc_kat);
+    g_test_add_func ("/ecc/ecdh", t_ecdh);
+    g_test_add_func ("/ecc/combined", t_combined);
 
-    srunner_set_log (sr, "test_result.log");
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed = srunner_ntests_failed(sr);
-    srunner_free(sr);
-    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return g_test_run ();
 }

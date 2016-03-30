@@ -5,58 +5,33 @@
 #include <assert.h>
 #include "../src/api.c"
 #include <stdio.h>
+#include <glib.h>
 
-
-START_TEST(t_test_random)
+static void
+t_test_random(void)
 {
     int rc;
     uint8_t bytes1[128];
     uint8_t bytes2[128];
 
     rc = yacl_get_random(bytes1, sizeof(bytes1));
-    ck_assert (0 == rc);
+    g_assert (0 == rc);
 
     rc = yacl_get_random(bytes2, sizeof(bytes2));
-    ck_assert (0 == rc);
+    g_assert (0 == rc);
 
     rc = memcmp (bytes1, bytes2, sizeof(bytes1));
 
-    ck_assert (0 != rc);
+    g_assert (0 != rc);
 
 }
-END_TEST
 
-static Suite *
-util_suite(void)
+
+int main(int argc, char *argv[])
 {
-    Suite *s;
-    TCase *tc_core;
+    g_test_init (&argc, &argv, NULL);
 
-    s = suite_create("util");
+    g_test_add_func ("/util/t_test_random", t_test_random);
 
-    /* Core test case */
-    tc_core = tcase_create("Core");
-
-    tcase_add_test(tc_core, t_test_random);
-
-    suite_add_tcase(s, tc_core);
-
-    return s;
-}
-
-
-int main(void)
-{
-    int number_failed;
-    Suite *s;
-    SRunner *sr;
-
-    s = util_suite();
-    sr = srunner_create(s);
-
-    srunner_set_log (sr, "util_result.log");
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed = srunner_ntests_failed(sr);
-    srunner_free(sr);
-    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return g_test_run ();
 }
