@@ -1,5 +1,4 @@
 #include "../yacl.h"
-#include <check.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <assert.h>
