@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <glib.h>
 
+
 static void
 t_test_random(void)
 {

@@ -21,8 +21,7 @@ include /usr/share/dpkg/default.mk
 %:
 	dh $@  --with autotools-dev
 override_dh_auto_configure:
-	dh_auto_configure -- --with-guile \
-	CFLAGS='-g -std=gnu11 -fstack-protector-strong -Wl,-z,relro -Wl,-z,now -Wformat-security -D_FORTIFY_SOURCE=2 -Wextra'
+	dh_auto_configure -- --with-guile
 
 # debmake generated override targets
 # This is example for Cmake (See http://bugs.debian.org/641051 )

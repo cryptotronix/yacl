@@ -1,6 +1,6 @@
-yacl (0.3.6-0ubuntu1) wily; urgency=low
+yacl (0.3.7-0ubuntu0) trusty; urgency=low
 
-  * Update for ubuntu packaging
+  * Update for ubuntu packaging for trusty
 
  -- Joshua Brian Datko <jbd@cryptotronix.com>  Tue, 29 Mar 2016 09:41:28 -0700
  
