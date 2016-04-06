@@ -1,0 +1,7 @@
+co-gcc.lnt
+-e801 //ignore goto
+-e537 //ignore repeated include
+-e451 //ignore include guards
++fie //integers as enums
+-e793 //ANSI ISO string name limit
+-passes(3)
