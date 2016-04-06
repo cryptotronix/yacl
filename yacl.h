@@ -6,6 +6,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+int
+yacl_init (void);
+
 /* --- Digest functions --- */
 #define YACL_SHA256_LEN 32
 
@@ -109,9 +112,113 @@ yacl_ecdh (const uint8_t public_key[YACL_P256_COORD_SIZE*2],
            uint8_t secret[YACL_P256_COORD_SIZE]);
 
 /* --- Utils --- */
-int
-yacl_memcmp_ct (const void *a, const void *b, size_t size);
 
 int
 yacl_get_random(uint8_t *dest, size_t size);
+
+/* --- libsodium wrappers (uses libsodium if available) --- */
+
+void yacl_memzero(void * const pnt, const size_t len);
+
+/*
+ * WARNING: yacl_memcmp() must be used to verify if two secret keys
+ * are equal, in constant time.
+ * It returns 0 if the keys are equal, and -1 if they differ.
+ * This function is not designed for lexicographical comparisons.
+ */
+
+int yacl_memcmp(const void * const b1_, const void * const b2_, size_t len)
+            __attribute__ ((warn_unused_result));
+
+/*
+ * yacl_compare() returns -1 if b1_ < b2_, 1 if b1_ > b2_ and 0 if b1_ == b2_
+ * It is suitable for lexicographical comparisons, or to compare nonces
+ * and counters stored in little-endian format.
+ * However, it is slower than yacl_memcmp().
+ */
+
+int yacl_compare(const unsigned char *b1_, const unsigned char *b2_,
+                   size_t len)
+            __attribute__ ((warn_unused_result));
+
+
+int yacl_is_zero(const unsigned char *n, const size_t nlen);
+
+
+void yacl_increment(unsigned char *n, const size_t nlen);
+
+
+void yacl_add(unsigned char *a, const unsigned char *b, const size_t len);
+
+
+char *yacl_bin2hex(char * const hex, const size_t hex_maxlen,
+                     const unsigned char * const bin, const size_t bin_len);
+
+
+int yacl_hex2bin(unsigned char * const bin, const size_t bin_maxlen,
+                   const char * const hex, const size_t hex_len,
+                   const char * const ignore, size_t * const bin_len,
+                   const char ** const hex_end);
+
+
+int yacl_mlock(void * const addr, const size_t len);
+
+
+int yacl_munlock(void * const addr, const size_t len);
+
+/* WARNING: yacl_malloc() and yacl_allocarray() are not general-purpose
+ * allocation functions.
+ *
+ * They return a pointer to a region filled with 0xd0 bytes, immediately
+ * followed by a guard page.
+ * As a result, accessing a single byte after the requested allocation size
+ * will intentionally trigger a segmentation fault.
+ *
+ * A canary and an additional guard page placed before the beginning of the
+ * region may also kill the process if a buffer underflow is detected.
+ *
+ * The memory layout is:
+ * [unprotected region size (read only)][guard page (no access)][unprotected pages (read/write)][guard page (no access)]
+ * With the layout of the unprotected pages being:
+ * [optional padding][16-bytes canary][user region]
+ *
+ * However:
+ * - These functions are significantly slower than standard functions
+ * - Each allocation requires 3 or 4 additional pages
+ * - The returned address will not be aligned if the allocation size is not
+ *   a multiple of the required alignment. For this reason, these functions
+ *   are designed to store data, such as secret keys and messages.
+ *
+ * yacl_malloc() can be used to allocate any libsodium data structure,
+ * with the exception of crypto_generichash_state.
+ *
+ * The crypto_generichash_state structure is packed and its length is
+ * either 357 or 361 bytes. For this reason, when using yacl_malloc() to
+ * allocate a crypto_generichash_state structure, padding must be added in
+ * order to ensure proper alignment:
+ * state = yacl_malloc((crypto_generichash_statebytes() + (size_t) 63U)
+ *                       & ~(size_t) 63U);
+ */
+
+
+void *yacl_malloc(const size_t size)
+            __attribute__ ((malloc));
+
+
+void *yacl_allocarray(size_t count, size_t size)
+            __attribute__ ((malloc));
+
+
+void yacl_free(void *ptr);
+
+
+int yacl_mprotect_noaccess(void *ptr);
+
+
+int yacl_mprotect_readonly(void *ptr);
+
+
+int yacl_mprotect_readwrite(void *ptr);
+
+
 #endif

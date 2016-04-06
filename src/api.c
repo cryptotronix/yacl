@@ -6,6 +6,17 @@
 #include "../yacl.h"
 #include "hash/sha256.h"
 #include "ecc/uECC.h"
+#ifdef HAVE_LIBSODIUM
+#include <sodium.h>
+#else
+#include "libsodium/sodium.h"
+#endif
+
+int
+yacl_init (void)
+{
+  return sodium_init();
+}
 
 int
 yacl_sha256 (const uint8_t *in, size_t len, uint8_t out[YACL_SHA256_LEN])
@@ -63,49 +74,9 @@ yacl_ecdsa_verify(const uint8_t public_key[YACL_P256_COORD_SIZE*2],
 }
 
 int
-yacl_memcmp_ct (const void *a, const void *b, size_t size)
-{
-  const uint8_t *ap = a;
-  const uint8_t *bp = b;
-  int rc = 0;
-  size_t i;
-
-  if (NULL == a || NULL == b) return -1;
-
-  for (i = 0; i < size; i++)
-    rc |= *ap++ ^ *bp++;
-
-  return rc;
-}
-
-int
 yacl_get_random(uint8_t *dest, size_t size)
 {
-  int fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
-  if (fd == -1)
-    {
-      fd = open("/dev/random", O_RDONLY | O_CLOEXEC);
-      if (fd == -1)
-        {
-          return fd;
-        }
-    }
-
-  char *ptr = (char *)dest;
-  size_t left = size;
-  while (left > 0)
-    {
-      ssize_t bytes_read = read(fd, ptr, left);
-      if (bytes_read <= 0)
-        {
-          close(fd);
-          return -1;
-        }
-      left -= bytes_read;
-      ptr += bytes_read;
-    }
-
-  close(fd);
+  randombytes_buf(dest, size);
   return 0;
 }
 

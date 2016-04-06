@@ -4,13 +4,8 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 ACLOCAL_AMFLAGS = -I m4
 
-libyacl_la_CPPFLAGS = $(DEPS_CFLAGS)
-libyacl_la_LIBADD = $(DEPS_LIBS)
-
-if HAVE_GUILE
-libyacl_la_CPPFLAGS += $(GUILE_CFLAGS)
-libyacl_la_LIBADD += $(GUILE_LIBS)
-endif
+libyacl_la_CPPFLAGS = $(DEPS_CFLAGS) $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS)
+libyacl_la_LIBADD = $(DEPS_LIBS) $(GUILE_LIBS) $(LIBSODIUM_CLFAGS)
 
 lib_LTLIBRARIES = libyacl.la
 
@@ -24,7 +19,25 @@ libyacl_la_SOURCES = src/ecc/uECC.h \
                      src/hash/sha256.h \
                      src/hash/hkdf.c \
                      src/api.c \
+                     src/sodium_wrappers.c \
                      yacl.h
+
+if HAVE_LIBSODIUM
+else
+libyacl_la_SOURCES += src/libsodium/sodium/core.c \
+                      src/libsodium/sodium/core.h \
+                      src/libsodium/sodium/export.h \
+                      src/libsodium/sodium/utils.h \
+                      src/libsodium/sodium/utils.c \
+                      src/libsodium/sodium/runtime.c \
+                      src/libsodium/sodium/runtime.h \
+                      src/libsodium/sodium/randombytes.h \
+                      src/libsodium/sodium/randombytes_sysrandom.h \
+                      src/libsodium/sodium/randombytes.c \
+                      src/libsodium/sodium/randombytes_sysrandom.c \
+                      src/libsodium/sodium/sodium.h
+
+endif
 
 if WANT_ARM
 libyacl_la_SOURCES += src/ecc/asm_arm.inc

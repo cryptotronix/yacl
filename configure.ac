@@ -24,12 +24,22 @@ AC_PROG_MKDIR_P
 # For information on how to properly maintain the library version information,
 # refer to the libtool manual, section "Updating library version information":
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-AC_SUBST([YACL_SO_VERSION], [4:0:1])
-AC_SUBST([YACL_API_VERSION], [0.3])
+AC_SUBST([YACL_SO_VERSION], [5:0:0])
+AC_SUBST([YACL_API_VERSION], [0.4])
 
 # uECC settings
 AC_DEFINE([uECC_CURVE], [uECC_secp256r1], [Use secp256r1 P-256])
 AC_DEFINE([uECC_ASM], [uECC_asm_fast], [Optimize for speed])
+
+AC_ARG_ENABLE(opt,
+[AS_HELP_STRING(--enable-opt,Optimize for the native CPU - The resulting library will be faster but not portable)],
+[
+AS_IF([test "x$enableval" = "xyes"], [
+CFLAGS="$CFLAGS -O3 -march=native"
+LDFLAGS="$LDFLAGS -O3 -march=native"])
+])
+
+PKG_PROG_PKG_CONFIG
 
 #LIBGLIB for unit tests
 PKG_CHECK_MODULES([LIBGLIB], [glib-2.0])
@@ -37,6 +47,31 @@ PKG_CHECK_MODULES([LIBGLIB], [glib-2.0])
 AC_ARG_WITH([guile],
         AS_HELP_STRING([--with-guile], [Build the guile extensions]))
 AM_CONDITIONAL([HAVE_GUILE], [test "x$with_guile" = "xyes"])
+
+AC_ARG_WITH([libsodium],
+        AS_HELP_STRING([--with-libsodium], [Link against libsodium]))
+AM_CONDITIONAL([HAVE_LIBSODIUM], [test "x$with_libsodium" = "xyes"])
+
+AS_IF([test "x$with_libsodium" = "xyes"], [
+            AC_DEFINE([HAVE_LIBSODIUM], [1], [Linking against libsodium])
+            PKG_CHECK_MODULES([LIBSODIUM], [libsodium])
+            AC_CHECK_LIB([sodium], [sodium_increment],
+                         [AC_DEFINE([HAVE_SODIUM_INCREMENT], [1], [Have sodium_increment])],
+                         [])
+
+            AC_CHECK_LIB([sodium], [sodium_compare],
+                         [AC_DEFINE([HAVE_SODIUM_COMPARE], [1], [Have sodium_compare])],
+                         [])
+
+            AC_CHECK_LIB([sodium], [sodium_is_zero],
+                       [AC_DEFINE([HAVE_SODIUM_IS_ZERO], [1], [Have sodium_is_zero])],
+                       [])
+
+            AC_CHECK_LIB([sodium], [sodium_add],
+                         [AC_DEFINE([HAVE_SODIUM_ADD], [1], [Have sodium_add])],
+                         [])
+
+])
 
 AS_IF([test "x$with_guile" = "xyes"], [
 # Guile Extensions

@@ -7,6 +7,7 @@
 #include <glib.h>
 
 
+
 static void
 t_ecc_kat(void)
 {
@@ -109,12 +110,13 @@ t_ecdh(void)
     rc = yacl_ecdh (alice_pub, bob_pri, bob_secret);
     g_assert (0 == rc);
 
-    g_assert (0 == memcmp (alice_secret, bob_secret, YACL_P256_COORD_SIZE));
+    g_assert (0 == yacl_memcmp (alice_secret, bob_secret, YACL_P256_COORD_SIZE));
 }
 
 
 int main(int argc, char *argv[])
 {
+    yacl_init();
     g_test_init (&argc, &argv, NULL);
 
     g_test_add_func ("/ecc/curve", t_test_curve);

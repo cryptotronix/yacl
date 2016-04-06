@@ -47,7 +47,7 @@ t_hmac_kat(void)
                           result);
 
     g_assert (0 == rc);
-    g_assert (0 == memcmp (result, mac, sizeof(mac)));
+    g_assert (0 == yacl_memcmp (result, mac, sizeof(mac)));
 }
 
 
