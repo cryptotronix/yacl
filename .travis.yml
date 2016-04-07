@@ -3,6 +3,6 @@ compiler:
   - gcc
   - clang
 # Change this to your needs
-before_install: sudo apt-get install check gnulib
+before_install: sudo apt-get install check gnulib libsodium guile-2.0 guile-2.0-dev
 
-script: ./autogen.sh && ./configure && make && make check
+script: ./autogen.sh && ./configure --with-guile --with-libsodium && make && make check
