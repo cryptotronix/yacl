@@ -5,7 +5,8 @@ Build-Depends: debhelper (>= 9),
                autotools-dev,
                libglib2.0-dev,
                pkg-config,
-               guile-2.0-dev
+               guile-2.0-dev,
+               libsodium-dev
 Standards-Version: 3.9.5
 Section: libs
 Homepage: https://www.github.com/cryptotronix/yacl
