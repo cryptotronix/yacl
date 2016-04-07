@@ -4,9 +4,6 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 ACLOCAL_AMFLAGS = -I m4
 
-libyacl_la_CPPFLAGS = $(DEPS_CFLAGS) $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS)
-libyacl_la_LIBADD = $(DEPS_LIBS) $(GUILE_LIBS) $(LIBSODIUM_CLFAGS)
-
 lib_LTLIBRARIES = libyacl.la
 
 SUBDIRS = . test
@@ -22,21 +19,21 @@ libyacl_la_SOURCES = src/ecc/uECC.h \
                      src/sodium_wrappers.c \
                      yacl.h
 
-if HAVE_LIBSODIUM
-else
-libyacl_la_SOURCES += src/libsodium/sodium/core.c \
-                      src/libsodium/sodium/core.h \
-                      src/libsodium/sodium/export.h \
-                      src/libsodium/sodium/utils.h \
-                      src/libsodium/sodium/utils.c \
-                      src/libsodium/sodium/runtime.c \
-                      src/libsodium/sodium/runtime.h \
-                      src/libsodium/sodium/randombytes.h \
-                      src/libsodium/sodium/randombytes_sysrandom.h \
-                      src/libsodium/sodium/randombytes.c \
-                      src/libsodium/sodium/randombytes_sysrandom.c \
-                      src/libsodium/sodium/sodium.h
-
+if !HAVE_LIBSODIUM
+libyacl_la_SOURCES += src/libsodium/sodium.h \
+                     src/libsodium/sodium/core.c \
+                     src/libsodium/sodium/core.h \
+                     src/libsodium/sodium/export.h \
+                     src/libsodium/sodium/utils.h \
+                     src/libsodium/sodium/utils.c \
+                     src/libsodium/sodium/runtime.c \
+                     src/libsodium/sodium/runtime.h \
+                     src/libsodium/sodium/randombytes.h \
+                     src/libsodium/sodium/randombytes_sysrandom.h \
+                     src/libsodium/sodium/randombytes.c \
+                     src/libsodium/sodium/randombytes_sysrandom.c \
+                     src/libsodium/sodium/version.c \
+                     src/libsodium/sodium/version.h
 endif
 
 if WANT_ARM
@@ -47,6 +44,10 @@ if HAVE_GUILE
 libyacl_la_SOURCES += src/guile/extension.c \
                       src/guile/extension.h
 endif
+
+libyacl_la_CPPFLAGS = $(DEPS_CFLAGS) $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS)
+libyacl_la_LIBADD = $(DEPS_LIBS) $(GUILE_LIBS) $(LIBSODIUM_CLFAGS)
+
 
 libyacl_la_LDFLAGS = -version-info $(YACL_SO_VERSION) -release $(YACL_API_VERSION)
 

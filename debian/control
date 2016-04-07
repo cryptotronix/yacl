@@ -17,10 +17,10 @@ Section: libdevel
 Architecture: any
 Depends: yacl1 (= ${binary:Version}), ${misc:Depends}
 Description: yacl development package.
- Small collection of crypto algorithms when OpenSSL is not needed/desired.
+ Wrapper for libsodium core with some extras.
 
 Package: yacl1
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Small collection of crypto algorithms.
- Small collection of crypto algorithms when OpenSSL is not needed/desired.
+ Wrapper for libsodium core with some extras

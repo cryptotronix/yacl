@@ -1,6 +1,6 @@
 # Copyright (C) 2014 Cryptotronix, LLC.
 
-AC_INIT([yacl], [0.3.7], [bugs@cryptotronix.com], [yacl],
+AC_INIT([yacl], [0.4.2], [bugs@cryptotronix.com], [yacl],
         [https://github.com/cryptotronix/yacl])
 AC_PREREQ([2.59])
 AC_USE_SYSTEM_EXTENSIONS
@@ -25,7 +25,7 @@ AC_PROG_MKDIR_P
 # refer to the libtool manual, section "Updating library version information":
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
 AC_SUBST([YACL_SO_VERSION], [5:0:0])
-AC_SUBST([YACL_API_VERSION], [0.4])
+AC_SUBST([YACL_API_VERSION], [1.0])
 
 # uECC settings
 AC_DEFINE([uECC_CURVE], [uECC_secp256r1], [Use secp256r1 P-256])
