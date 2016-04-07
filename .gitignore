@@ -44,7 +44,6 @@ src/.deps/
 /ylwrap
 /config.guess
 /config.sub
-m4/
 *.lo
 lib/
 snippet/
@@ -86,3 +85,8 @@ snippet/
 '
 /test/util.trs
 /test/util_result.log
+/m4/libtool.m4
+/m4/ltoptions.m4
+/m4/ltsugar.m4
+/m4/ltversion.m4
+/m4/lt~obsolete.m4

@@ -89,6 +89,143 @@ AS_IF([test "x$enable_arm_asm" = "xyes"], [
 AC_DEFINE([WANT_ARM_ASM], [1], [Use arm asm])
 ])
 
+dnl Checks
+
+AC_PROG_CC_C99
+AM_PROG_AS
+AC_USE_SYSTEM_EXTENSIONS
+
+AC_CHECK_DEFINE([__native_client__], [NATIVECLIENT="yes"], [])
+
+AC_CHECK_DEFINE([_FORTIFY_SOURCE], [], [
+  AX_CHECK_COMPILE_FLAG([-D_FORTIFY_SOURCE=2],
+    [CPPFLAGS="$CPPFLAGS -D_FORTIFY_SOURCE=2"])
+])
+
+AX_CHECK_COMPILE_FLAG([-fvisibility=hidden],
+  [CFLAGS="$CFLAGS -fvisibility=hidden"])
+
+AS_CASE([$host_os], [cygwin*|mingw*|msys|pw32*|cegcc*], [ ], [
+  AX_CHECK_COMPILE_FLAG([-fPIC], [
+    AX_CHECK_LINK_FLAG([-fPIC],
+      [CFLAGS="$CFLAGS -fPIC"]
+    )
+  ])
+])
+
+AS_IF([test "$enable_pie" != "no"],[
+  AX_CHECK_COMPILE_FLAG([-fPIE], [
+    AX_CHECK_LINK_FLAG([-fPIE],
+      [AX_CHECK_LINK_FLAG([-pie],
+        [CFLAGS="$CFLAGS -fPIE"
+         LDFLAGS="$LDFLAGS -pie"])
+    ])
+  ])
+])
+
+AX_CHECK_COMPILE_FLAG([-fno-strict-aliasing], [CFLAGS="$CFLAGS -fno-strict-aliasing"])
+AX_CHECK_COMPILE_FLAG([-fno-strict-overflow], [CFLAGS="$CFLAGS -fno-strict-overflow"], [
+  AX_CHECK_COMPILE_FLAG([-fwrapv], [CFLAGS="$CFLAGS -fwrapv"])
+])
+
+AS_IF([test "$GCC" = "yes" ], [
+  AS_CASE([$host_cpu],
+    [i?86|amd64|x86_64], [
+      AC_COMPILE_IFELSE(
+        [AC_LANG_SOURCE([
+#if !defined(__clang__) && defined(__GNUC__) && ((__GNUC__ << 8) | __GNUC_MINOR__) < 0x403
+# error old gcc
+#endif
+int main(void) { return 0; }
+         ])],,[
+          AX_CHECK_COMPILE_FLAG([-flax-vector-conversions], [CFLAGS="$CFLAGS -flax-vector-conversions"])
+        ])
+      ]
+    )
+  ])
+
+LIBTOOL_OLD_FLAGS="$LIBTOOL_EXTRA_FLAGS"
+LIBTOOL_EXTRA_FLAGS="$LIBTOOL_EXTRA_FLAGS -version-info $SODIUM_LIBRARY_VERSION"
+AC_ARG_ENABLE(soname-versions,
+  [AC_HELP_STRING([--enable-soname-versions], [enable soname versions (must be disabled for Android) (default: enabled)])],
+    [
+        AS_IF([test "x$enableval" = "xno"], [
+          LIBTOOL_EXTRA_FLAGS="$LIBTOOL_OLD_FLAGS -avoid-version"
+        ])
+    ]
+)
+
+AS_CASE([$host_os],
+  [cygwin*|mingw*|msys|pw32*|cegcc*], [
+    AX_CHECK_LINK_FLAG([-Wl,--dynamicbase], [LDFLAGS="$LDFLAGS -Wl,--dynamicbase"])
+    AX_CHECK_LINK_FLAG([-Wl,--high-entropy-va], [LDFLAGS="$LDFLAGS -Wl,--high-entropy-va"])
+    AX_CHECK_LINK_FLAG([-Wl,--nxcompat], [LDFLAGS="$LDFLAGS -Wl,--nxcompat"])
+  ])
+
+AS_IF([test "x$enable_ssp" != "xno"],[
+
+AS_CASE([$host_os],
+  [cygwin*|mingw*|msys|pw32*|cegcc*], [ ],
+  [*], [
+    AX_CHECK_COMPILE_FLAG([-fstack-protector], [
+      AX_CHECK_LINK_FLAG([-fstack-protector],
+        [CFLAGS="$CFLAGS -fstack-protector"]
+      )
+    ])
+  ])
+])
+
+AX_CHECK_COMPILE_FLAG([-Wwrite-strings], [CFLAGS="$CFLAGS -Wwrite-strings"])
+AX_CHECK_COMPILE_FLAG([-Wdiv-by-zero], [CFLAGS="$CFLAGS -Wdiv-by-zero"])
+AX_CHECK_COMPILE_FLAG([-Wsometimes-uninitialized], [CFLAGS="$CFLAGS -Wsometimes-uninitialized"])
+
+AC_ARG_VAR([CWFLAGS], [define to compilation flags for generating extra warnings])
+
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wall], [CWFLAGS="$CWFLAGS -Wall"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wextra], [CWFLAGS="$CWFLAGS -Wextra"])
+
+AC_MSG_CHECKING(for clang)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
+#ifndef __clang__
+be sad
+#endif
+]])],
+  [AC_MSG_RESULT(yes)
+   AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wno-unknown-warning-option],
+     [CWFLAGS="$CWFLAGS -Wno-unknown-warning-option"])
+  ],
+  [AC_MSG_RESULT(no)
+])
+
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wbad-function-cast], [CWFLAGS="$CWFLAGS -Wbad-function-cast"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wcast-align], [CWFLAGS="$CWFLAGS -Wcast-align"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wcast-qual], [CWFLAGS="$CWFLAGS -Wcast-qual"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wduplicated-cond], [CWFLAGS="$CWFLAGS -Wduplicated-cond"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wfloat-equal], [CWFLAGS="$CWFLAGS -Wfloat-equal"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wformat=2], [CWFLAGS="$CWFLAGS -Wformat=2"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wmissing-declarations], [CWFLAGS="$CWFLAGS -Wmissing-declarations"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wmissing-prototypes], [CWFLAGS="$CWFLAGS -Wmissing-prototypes"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wnested-externs], [CWFLAGS="$CWFLAGS -Wnested-externs"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wno-unknown-pragmas], [CWFLAGS="$CWFLAGS -Wno-unknown-pragmas"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wnormalized=id], [CWFLAGS="$CWFLAGS -Wnormalized=id"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wnull-dereference], [CWFLAGS="$CWFLAGS -Wnull-dereference"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wpointer-arith], [CWFLAGS="$CWFLAGS -Wpointer-arith"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wredundant-decls], [CWFLAGS="$CWFLAGS -Wredundant-decls"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wstrict-prototypes], [CWFLAGS="$CWFLAGS -Wstrict-prototypes"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wswitch-enum], [CWFLAGS="$CWFLAGS -Wswitch-enum"])
+AX_CHECK_COMPILE_FLAG([$CWFLAGS -Wvariable-decl], [CWFLAGS="$CWFLAGS -Wvariable-decl"])
+
+AX_CHECK_LINK_FLAG([-Wl,-z,relro], [LDFLAGS="$LDFLAGS -Wl,-z,relro"])
+AX_CHECK_LINK_FLAG([-Wl,-z,now], [LDFLAGS="$LDFLAGS -Wl,-z,now"])
+AX_CHECK_LINK_FLAG([-Wl,-z,noexecstack], [LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"])
+
+LT_INIT
+AC_SUBST(LIBTOOL_DEPS)
+
+AC_ARG_VAR([AR], [path to the ar utility])
+AC_CHECK_TOOL([AR], [ar], [ar])
+
+
 # Override the template file name of the generated .pc file, so that there
 # is no need to rename the template file when the API version changes.
 AC_CONFIG_FILES([Makefile test/Makefile yacl.pc:yacl.pc.in])
