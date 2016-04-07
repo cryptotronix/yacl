@@ -6,15 +6,42 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifdef YACL_STATIC
+# define YACL_EXPORT
+#else
+# if defined(_MSC_VER)
+#  ifdef YACL_DLL_EXPORT
+#   define YACL_EXPORT __declspec(dllexport)
+#  else
+#   define YACL_EXPORT __declspec(dllimport)
+#  endif
+# else
+#  if defined(__SUNPRO_C)
+#   ifndef __GNU_C__
+#    define YACL_EXPORT __attribute__ (visibility(__global))
+#   else
+#    define YACL_EXPORT __attribute__ __global
+#   endif
+#  elif defined(_MSG_VER)
+#   define YACL_EXPORT extern __declspec(dllexport)
+#  else
+#   define YACL_EXPORT __attribute__ ((visibility ("default")))
+#  endif
+# endif
+#endif
+
+YACL_EXPORT
 int
 yacl_init (void);
 
 /* --- Digest functions --- */
 #define YACL_SHA256_LEN 32
 
+YACL_EXPORT
 int
 yacl_sha256 (const uint8_t *in, size_t len, uint8_t out[YACL_SHA256_LEN]);
 
+YACL_EXPORT
 int
 yacl_hmac_sha256(const uint8_t *key, size_t key_len,
                  const uint8_t *data, size_t data_len,
@@ -22,13 +49,13 @@ yacl_hmac_sha256(const uint8_t *key, size_t key_len,
 
 /* --- HKDF --- */
 /* hkdf functions */
-
+YACL_EXPORT
 int
 yacl_hkdf_256_extract( const uint8_t *salt, int salt_len,
                        const uint8_t *ikm, int ikm_len,
                        uint8_t prk[YACL_SHA256_LEN]);
 
-
+YACL_EXPORT
 int
 yacl_hkdf_256_expand(const uint8_t prk[ ], int prk_len,
                      const unsigned char *info, int info_len,
@@ -70,6 +97,7 @@ yacl_hkdf_256_expand(const uint8_t prk[ ], int prk_len,
  *      sha 0 on success otherwise non-zero
  *
  */
+YACL_EXPORT
 int
 yacl_hkdf_256(const unsigned char *salt, int salt_len,
               const unsigned char *ikm, int ikm_len,
@@ -80,44 +108,44 @@ yacl_hkdf_256(const unsigned char *salt, int salt_len,
 /* --- ECC functions ---*/
 
 #define YACL_P256_COORD_SIZE 32
-
+YACL_EXPORT
 int
 yacl_create_key_pair(uint8_t public_key[YACL_P256_COORD_SIZE*2],
                      uint8_t private_key[YACL_P256_COORD_SIZE]);
-
+YACL_EXPORT
 int
 yacl_ecdsa_sign(const uint8_t private_key[YACL_P256_COORD_SIZE],
                 const uint8_t message_hash[YACL_P256_COORD_SIZE],
                 uint8_t signature[YACL_P256_COORD_SIZE*2]);
-
+YACL_EXPORT
 int
 yacl_ecdsa_verify(const uint8_t public_key[YACL_P256_COORD_SIZE*2],
                   const uint8_t hash[YACL_P256_COORD_SIZE],
                   const uint8_t signature[YACL_P256_COORD_SIZE*2]);
 
-
+YACL_EXPORT
 int
 yacl_hash_ecdsa_sign(const uint8_t *data, size_t len,
                      const uint8_t private_key[YACL_P256_COORD_SIZE],
                      uint8_t signature[YACL_P256_COORD_SIZE*2]);
-
+YACL_EXPORT
 int
 yacl_hash_verify(const uint8_t *data, size_t len,
                  const uint8_t public_key[YACL_P256_COORD_SIZE*2],
                  const uint8_t signature[YACL_P256_COORD_SIZE*2]);
-
+YACL_EXPORT
 int
 yacl_ecdh (const uint8_t public_key[YACL_P256_COORD_SIZE*2],
            const uint8_t private_key[YACL_P256_COORD_SIZE],
            uint8_t secret[YACL_P256_COORD_SIZE]);
 
 /* --- Utils --- */
-
+YACL_EXPORT
 int
 yacl_get_random(uint8_t *dest, size_t size);
 
 /* --- libsodium wrappers (uses libsodium if available) --- */
-
+YACL_EXPORT
 void yacl_memzero(void * const pnt, const size_t len);
 
 /*
@@ -126,7 +154,7 @@ void yacl_memzero(void * const pnt, const size_t len);
  * It returns 0 if the keys are equal, and -1 if they differ.
  * This function is not designed for lexicographical comparisons.
  */
-
+YACL_EXPORT
 int yacl_memcmp(const void * const b1_, const void * const b2_, size_t len)
             __attribute__ ((warn_unused_result));
 
@@ -136,34 +164,34 @@ int yacl_memcmp(const void * const b1_, const void * const b2_, size_t len)
  * and counters stored in little-endian format.
  * However, it is slower than yacl_memcmp().
  */
-
+YACL_EXPORT
 int yacl_compare(const unsigned char *b1_, const unsigned char *b2_,
                    size_t len)
             __attribute__ ((warn_unused_result));
 
-
+YACL_EXPORT
 int yacl_is_zero(const unsigned char *n, const size_t nlen);
 
-
+YACL_EXPORT
 void yacl_increment(unsigned char *n, const size_t nlen);
 
-
+YACL_EXPORT
 void yacl_add(unsigned char *a, const unsigned char *b, const size_t len);
 
-
+YACL_EXPORT
 char *yacl_bin2hex(char * const hex, const size_t hex_maxlen,
                      const unsigned char * const bin, const size_t bin_len);
 
-
+YACL_EXPORT
 int yacl_hex2bin(unsigned char * const bin, const size_t bin_maxlen,
                    const char * const hex, const size_t hex_len,
                    const char * const ignore, size_t * const bin_len,
                    const char ** const hex_end);
 
-
+YACL_EXPORT
 int yacl_mlock(void * const addr, const size_t len);
 
-
+YACL_EXPORT
 int yacl_munlock(void * const addr, const size_t len);
 
 /* WARNING: yacl_malloc() and yacl_allocarray() are not general-purpose
@@ -200,25 +228,26 @@ int yacl_munlock(void * const addr, const size_t len);
  *                       & ~(size_t) 63U);
  */
 
-
+YACL_EXPORT
 void *yacl_malloc(const size_t size)
             __attribute__ ((malloc));
 
-
+YACL_EXPORT
 void *yacl_allocarray(size_t count, size_t size)
             __attribute__ ((malloc));
 
-
+YACL_EXPORT
 void yacl_free(void *ptr);
 
-
+YACL_EXPORT
 int yacl_mprotect_noaccess(void *ptr);
 
-
+YACL_EXPORT
 int yacl_mprotect_readonly(void *ptr);
 
-
+YACL_EXPORT
 int yacl_mprotect_readwrite(void *ptr);
+
 
 
 #endif

@@ -45,12 +45,12 @@ t_ecc_kat(void)
 
 }
 
-static void
-t_test_curve(void)
-{
-    g_assert (uECC_secp256r1 ==  uECC_curve());
+/* static void */
+/* t_test_curve(void) */
+/* { */
+/*     g_assert (uECC_secp256r1 ==  uECC_curve()); */
 
-}
+/* } */
 
 
 static void
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     yacl_init();
     g_test_init (&argc, &argv, NULL);
 
-    g_test_add_func ("/ecc/curve", t_test_curve);
+    //g_test_add_func ("/ecc/curve", t_test_curve);
     g_test_add_func ("/ecc/kat", t_ecc_kat);
     g_test_add_func ("/ecc/ecdh", t_ecdh);
     g_test_add_func ("/ecc/combined", t_combined);

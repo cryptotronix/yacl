@@ -123,18 +123,6 @@ sodium_memcmp(const void * const b1_, const void * const b2_, size_t len)
     return (1 & ((d - 1) >> 8)) - 1;
 }
 
-#ifdef HAVE_WEAK_SYMBOLS
-__attribute__ ((weak)) void
-_sodium_dummy_symbol_to_prevent_compare_lto(const unsigned char *b1,
-                                            const unsigned char *b2,
-                                            const size_t len)
-{
-    (void) b1;
-    (void) b2;
-    (void) len;
-}
-#endif
-
 
 /* Derived from original code by CodesInChaos */
 char *

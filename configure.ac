@@ -17,7 +17,7 @@ AC_PROG_CC
 AC_PROG_CC_C_O
 AM_PROG_CC_C_O
 AM_PROG_AR
-LT_INIT([static])
+
 AC_PROG_MKDIR_P
 
 # Define these substitions here to keep all version information in one place.
@@ -225,6 +225,371 @@ AC_SUBST(LIBTOOL_DEPS)
 AC_ARG_VAR([AR], [path to the ar utility])
 AC_CHECK_TOOL([AR], [ar], [ar])
 
+dnl Checks for headers
+
+AS_IF([test "x$EMSCRIPTEN" = "x"],[
+
+  AC_MSG_CHECKING(for MMX instructions set)
+  oldcflags="$CFLAGS"
+  AX_CHECK_COMPILE_FLAG([-mmmx], [CFLAGS="$CFLAGS -mmmx"])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("mmx")
+#include <mmintrin.h>
+]], [[ __m64 x = _mm_setzero_si64(); ]])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_MMINTRIN_H], [1], [mmx is available])
+     AX_CHECK_COMPILE_FLAG([-mmmx], [CFLAGS_MMX="-mmmx"])],
+    [AC_MSG_RESULT(no)])
+  CFLAGS="$oldcflags"
+
+  AC_MSG_CHECKING(for SSE2 instructions set)
+  oldcflags="$CFLAGS"
+  AX_CHECK_COMPILE_FLAG([-msse2], [CFLAGS="$CFLAGS -msse2"])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("sse2")
+#ifndef __SSE2__
+# define __SSE2__
+#endif
+#include <emmintrin.h>
+]], [[ __m128d x = _mm_setzero_pd();
+       __m128i y = _mm_srli_epi64(_mm_setzero_si128(), 26); ]])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_EMMINTRIN_H], [1], [sse2 is available])
+     AX_CHECK_COMPILE_FLAG([-msse2], [CFLAGS_SSE2="-msse2"])],
+    [AC_MSG_RESULT(no)])
+  CFLAGS="$oldcflags"
+
+  oldcflags="$CFLAGS"
+  AX_CHECK_COMPILE_FLAG([-msse3], [CFLAGS="$CFLAGS -msse3"])
+  AC_MSG_CHECKING(for SSE3 instructions set)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("sse3")
+#include <pmmintrin.h>
+]], [[ __m128 x = _mm_addsub_ps(_mm_cvtpd_ps(_mm_setzero_pd()),
+                                _mm_cvtpd_ps(_mm_setzero_pd())); ]])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_PMMINTRIN_H], [1], [sse3 is available])
+     AX_CHECK_COMPILE_FLAG([-msse3], [CFLAGS_SSE3="-msse3"])],
+    [AC_MSG_RESULT(no)])
+  CFLAGS="$oldcflags"
+
+  oldcflags="$CFLAGS"
+  AX_CHECK_COMPILE_FLAG([-mssse3], [CFLAGS="$CFLAGS -mssse3"])
+  AC_MSG_CHECKING(for SSSE3 instructions set)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("ssse3")
+#include <tmmintrin.h>
+]], [[ __m64 x = _mm_abs_pi32(_m_from_int(0)); ]])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_TMMINTRIN_H], [1], [ssse3 is available])
+     AX_CHECK_COMPILE_FLAG([-mssse3], [CFLAGS_SSSE3="-mssse3"])],
+    [AC_MSG_RESULT(no)])
+  CFLAGS="$oldcflags"
+
+  oldcflags="$CFLAGS"
+  AX_CHECK_COMPILE_FLAG([-msse4.1], [CFLAGS="$CFLAGS -msse4.1"])
+  AC_MSG_CHECKING(for SSE4.1 instructions set)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("sse4.1")
+#include <smmintrin.h>
+]], [[ __m128i x = _mm_minpos_epu16(_mm_setzero_si128()); ]])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_SMMINTRIN_H], [1], [sse4.1 is available])
+     AX_CHECK_COMPILE_FLAG([-msse4.1], [CFLAGS_SSE41="-msse4.1"])],
+    [AC_MSG_RESULT(no)])
+  CFLAGS="$oldcflags"
+
+  oldcflags="$CFLAGS"
+  AX_CHECK_COMPILE_FLAG([-mavx], [CFLAGS="$CFLAGS -mavx"])
+  AC_MSG_CHECKING(for AVX instructions set)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("avx")
+#include <immintrin.h>
+]], [[ _mm256_zeroall(); ]])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_AVXINTRIN_H], [1], [AVX is available])
+     AX_CHECK_COMPILE_FLAG([-mavx], [CFLAGS_AVX="-mavx"])],
+    [AC_MSG_RESULT(no)])
+  CFLAGS="$oldcflags"
+
+  oldcflags="$CFLAGS"
+  AX_CHECK_COMPILE_FLAG([-mavx2], [CFLAGS="$CFLAGS -mavx2"])
+  AC_MSG_CHECKING(for AVX2 instructions set)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("avx2")
+#include <immintrin.h>
+]], [[ __m256i x = _mm256_abs_epi8(_mm256_setzero_si256()); ]])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_AVX2INTRIN_H], [1], [AVX2 is available])
+     AX_CHECK_COMPILE_FLAG([-mavx2], [CFLAGS_AVX="-mavx2"])
+     AC_MSG_CHECKING(if _mm256_broadcastsi128_si256 is correctly defined)
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("avx2")
+#include <immintrin.h>
+     ]], [[ __m256i y = _mm256_broadcastsi128_si256(_mm_setzero_si128()); ]])],
+       [AC_MSG_RESULT(yes)],
+       [AC_MSG_RESULT(no)
+        AC_DEFINE([_mm256_broadcastsi128_si256], [_mm_broadcastsi128_si256],
+                  [Define to the local name of _mm256_broadcastsi128_si256])])
+     ],
+    [AC_MSG_RESULT(no)])
+  CFLAGS="$oldcflags"
+
+  oldcflags="$CFLAGS"
+  AX_CHECK_COMPILE_FLAG([-maes], [CFLAGS="$CFLAGS -maes"])
+  AX_CHECK_COMPILE_FLAG([-mpclmul], [CFLAGS="$CFLAGS -mpclmul"])
+  AC_MSG_CHECKING(for AESNI instructions set and PCLMULQDQ)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#pragma GCC target("aes")
+#pragma GCC target("pclmul")
+#include <wmmintrin.h>
+]], [[ __m128i x = _mm_aesimc_si128(_mm_setzero_si128());
+       __m128i y = _mm_clmulepi64_si128(_mm_setzero_si128(), _mm_setzero_si128(), 0);]])],
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE([HAVE_WMMINTRIN_H], [1], [aesni is available])
+     AX_CHECK_COMPILE_FLAG([-maes], [CFLAGS_AESNI="-maes"])
+     AX_CHECK_COMPILE_FLAG([-mpclmul], [CFLAGS_PCLMUL="-mpclmul"])
+     ],
+    [AC_MSG_RESULT(no)])
+  CFLAGS="$oldcflags"
+
+])
+
+AC_SUBST(CFLAGS_MMX)
+AC_SUBST(CFLAGS_SSE2)
+AC_SUBST(CFLAGS_SSE3)
+AC_SUBST(CFLAGS_SSSE3)
+AC_SUBST(CFLAGS_SSE41)
+AC_SUBST(CFLAGS_AVX)
+AC_SUBST(CFLAGS_AVX2)
+AC_SUBST(CFLAGS_AESNI)
+AC_SUBST(CFLAGS_PCLMUL)
+
+AC_CHECK_HEADERS([sys/mman.h])
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+
+AC_C_INLINE
+AS_CASE([$host_cpu],
+  [i?86|amd64|x86_64],
+    [ac_cv_c_bigendian=no]
+)
+AC_C_BIGENDIAN(
+  AC_DEFINE(NATIVE_BIG_ENDIAN, 1, [machine is bigendian]),
+  AC_DEFINE(NATIVE_LITTLE_ENDIAN, 1, [machine is littleendian]),
+  AC_MSG_ERROR([unknown endianness]),
+  AC_MSG_ERROR([universal endianness is not supported - compile separately and use lipo(1)])
+)
+
+AC_MSG_CHECKING(whether __STDC_LIMIT_MACROS is required)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <limits.h>
+#include <stdint.h>
+]], [[
+(void) SIZE_MAX;
+(void) UINT64_MAX;
+]])],
+  [AC_MSG_RESULT(no)],
+  [AC_MSG_RESULT(yes)
+   CPPFLAGS="$CPPFLAGS -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS"
+])
+
+HAVE_AMD64_ASM_V=0
+AS_IF([test "$enable_asm" != "no"],[
+  AC_MSG_CHECKING(whether we can use x86_64 asm code)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+  ]], [[
+#if defined(__amd64) || defined(__amd64__) || defined(__x86_64__)
+# if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(_WIN32) || defined(_WIN64)
+#  error Windows x86_64 calling conventions are not supported yet
+# endif
+/* neat */
+#else
+# error !x86_64
+#endif
+unsigned char i = 0, o = 0, t;
+__asm__ __volatile__ ("pxor %%xmm12, %%xmm6 \n"
+                      "movb (%[i]), %[t] \n"
+                      "addb %[t], (%[o]) \n"
+                      : [t] "=&r"(t)
+                      : [o] "D"(&o), [i] "S"(&i)
+                      : "memory", "flags", "cc");
+]])],
+  [AC_MSG_RESULT(yes)
+   AC_DEFINE([HAVE_AMD64_ASM], [1], [x86_64 asm code can be used])
+   HAVE_AMD64_ASM_V=1],
+  [AC_MSG_RESULT(no)])
+])
+AM_CONDITIONAL([HAVE_AMD64_ASM], [test $HAVE_AMD64_ASM_V = 1])
+AC_SUBST(HAVE_AMD64_ASM_V)
+
+HAVE_AVX_ASM_V=0
+AS_IF([test "$enable_asm" != "no"],[
+  AC_MSG_CHECKING(whether we can assemble AVX opcodes)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+  ]], [[
+#if defined(__amd64) || defined(__amd64__) || defined(__x86_64__)
+# if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(_WIN32) || defined(_WIN64)
+#  error Windows x86_64 calling conventions are not supported yet
+# endif
+/* neat */
+#else
+# error !x86_64
+#endif
+__asm__ __volatile__ ("vpunpcklqdq %xmm0,%xmm13,%xmm0");
+]])],
+  [AC_MSG_RESULT(yes)
+   AC_DEFINE([HAVE_AVX_ASM], [1], [AVX opcodes are supported])
+   HAVE_AVX_ASM_V=1],
+  [AC_MSG_RESULT(no)])
+])
+AM_CONDITIONAL([HAVE_AVX_ASM], [test $HAVE_AVX_ASM_V = 1])
+AC_SUBST(HAVE_AVX_ASM_V)
+
+AC_MSG_CHECKING(for 128-bit arithmetic)
+HAVE_TI_MODE_V=0
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#if !defined(__GNUC__) && !defined(__SIZEOF_INT128__)
+# error mode(TI) is a gcc extension, and __int128 is not available
+#endif
+#if defined(__clang__) && !defined(__x86_64__)
+# error clang does not properly handle the 128-bit type on 32-bit systems
+#endif
+#ifndef NATIVE_LITTLE_ENDIAN
+# error libsodium currently expects a little endian CPU for the 128-bit type
+#endif
+#ifdef __EMSCRIPTEN__
+# error emscripten currently supports only shift operations on integers \
+#       larger than 64 bits
+#endif
+#include <stddef.h>
+#include <stdint.h>
+#if defined(__SIZEOF_INT128__)
+typedef unsigned __int128 uint128_t;
+#else
+typedef unsigned uint128_t __attribute__((mode(TI)));
+#endif
+void fcontract(uint128_t *t) {
+  *t += 0x8000000000000 - 1;
+}
+]], [[
+(void) fcontract;
+]])],
+[AC_MSG_RESULT(yes)
+ AC_DEFINE([HAVE_TI_MODE], [1], [gcc TI mode is available])
+ HAVE_TI_MODE_V=1],
+[AC_MSG_RESULT(no)])
+AM_CONDITIONAL([HAVE_TI_MODE], [test $HAVE_TI_MODE_V = 1])
+AC_SUBST(HAVE_TI_MODE_V)
+
+HAVE_CPUID_V=0
+AS_IF([test "$enable_asm" != "no"],[
+  AC_MSG_CHECKING(for cpuid instruction)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ ]], [[
+unsigned int cpu_info[4];
+__asm__ __volatile__ ("xchgl %%ebx, %k1; cpuid; xchgl %%ebx, %k1" :
+                      "=a" (cpu_info[0]), "=&r" (cpu_info[1]),
+                      "=c" (cpu_info[2]), "=d" (cpu_info[3]) :
+                      "0" (0U), "2" (0U));
+  ]])],
+  [AC_MSG_RESULT(yes)
+   AC_DEFINE([HAVE_CPUID], [1], [cpuid instruction is available])
+   HAVE_CPUID_V=1],
+  [AC_MSG_RESULT(no)])
+  ])
+AC_SUBST(HAVE_CPUID_V)
+
+asm_hide_symbol="unsupported"
+AS_IF([test "$enable_asm" != "no"],[
+  AC_MSG_CHECKING(if the .private_extern asm directive is supported)
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[ ]], [[
+__asm__ __volatile__ (".private_extern dummy_symbol \n"
+                      ".private_extern _dummy_symbol \n"
+                      ".globl dummy_symbol \n"
+                      ".globl _dummy_symbol \n"
+                      "dummy_symbol: \n"
+                      "_dummy_symbol: \n"
+                      "    nop \n"
+);
+  ]])],
+  [AC_MSG_RESULT(yes)
+   asm_hide_symbol=".private_extern"],
+  [AC_MSG_RESULT(no)])
+
+  AC_MSG_CHECKING(if the .hidden asm directive is supported)
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[ ]], [[
+__asm__ __volatile__ (".hidden dummy_symbol \n"
+                      ".hidden _dummy_symbol \n"
+                      ".globl dummy_symbol \n"
+                      ".globl _dummy_symbol \n"
+                      "dummy_symbol: \n"
+                      "_dummy_symbol: \n"
+                      "    nop \n"
+);
+  ]])],
+  [AC_MSG_RESULT(yes)
+   AS_IF([test "$asm_hide_symbol" = "unsupported"],
+          [asm_hide_symbol=".hidden"],
+          [AC_MSG_NOTICE([unable to reliably tag symbols as private])
+           asm_hide_symbol="unsupported"])
+  ],
+  [AC_MSG_RESULT(no)])
+
+  AS_IF([test "$asm_hide_symbol" != "unsupported"],[
+    AC_DEFINE_UNQUOTED([ASM_HIDE_SYMBOL], [$asm_hide_symbol], [directive to hide symbols])
+  ])
+])
+
+AC_MSG_CHECKING(if weak symbols are supported)
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+__attribute__((weak)) void __dummy(void *x) { }
+void f(void *x) { __dummy(x); }
+]], [[ ]]
+)],
+[AC_MSG_RESULT(yes)
+ AC_DEFINE([HAVE_WEAK_SYMBOLS], [1], [weak symbols are supported])],
+[AC_MSG_RESULT(no)])
+
+AC_MSG_CHECKING(if data alignment is required)
+aligned_access_required=yes
+AS_CASE([$host_cpu],
+  [i?86|amd64|x86_64|powerpc*|s390*],
+    [aligned_access_required=no],
+  [arm*],
+    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#ifndef __ARM_FEATURE_UNALIGNED
+# error data alignment is required
+#endif
+      ]], [[]])], [aligned_access_required=no], [])]
+)
+AS_IF([test "x$aligned_access_required" = "xyes"],
+  [AC_MSG_RESULT(yes)],
+  [AC_MSG_RESULT(no)
+   AC_DEFINE([CPU_UNALIGNED_ACCESS], [1], [unaligned memory access is supported])])
+
+dnl Checks for functions and headers
+
+AS_IF([test "x$EMSCRIPTEN" = "x"],[
+  AC_CHECK_FUNCS([arc4random arc4random_buf])
+  AC_CHECK_FUNCS([mmap mlock madvise mprotect explicit_bzero])
+])
+AC_CHECK_FUNCS([posix_memalign getpid])
+
+AC_SUBST([LIBTOOL_EXTRA_FLAGS])
+
+TEST_LDFLAGS=''
+AS_IF([test "x$EMSCRIPTEN" != "x"],[
+  EXEEXT=.js
+  TEST_LDFLAGS='--memory-init-file 0 --pre-js pre.js.inc -s RESERVED_FUNCTION_POINTERS=8'
+])
+AC_SUBST(TEST_LDFLAGS)
+AM_CONDITIONAL([EMSCRIPTEN], [test "x$EMSCRIPTEN" != "x"])
+
+AM_CONDITIONAL([NATIVECLIENT], [test "x$NATIVECLIENT" != "x"])
+
+
+LT_INIT([static])
+gl_LD_OUTPUT_DEF
 
 # Override the template file name of the generated .pc file, so that there
 # is no need to rename the template file when the API version changes.

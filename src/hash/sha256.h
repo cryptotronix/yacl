@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include "../../yacl.h"
 
 #define u8 uint8_t
 #define u32 uint32_t
@@ -45,6 +46,7 @@
 
 int hmac_sha256_vector(const u8 *key, size_t key_len, size_t num_elem,
 		       const u8 *addr[], const size_t *len, u8 *mac);
+YACL_EXPORT
 int hmac_sha256(const u8 *key, size_t key_len, const u8 *data,
 		size_t data_len, u8 *mac);
 void sha256_prf(const u8 *key, size_t key_len, const char *label,
@@ -68,5 +70,6 @@ int sha256_process(struct sha256_state *md, const unsigned char *in,
 int sha256_done(struct sha256_state *md, unsigned char *out);
 int sha256_vector(size_t num_elem, const u8 *addr[], const size_t *len,
 		  u8 *mac);
+YACL_EXPORT
 int sha256 (const unsigned char *in, unsigned long len, unsigned char *out);
 #endif /* SHA256_H */

@@ -8,14 +8,10 @@ Yet Another Crypto Library
     src="https://scan.coverity.com/projects/6244/badge.svg"/>
 </a>
 
-A collection of lightweight cryptographic algorithms... patched together.
-
-It's main goal is to have minimal code footprint for smaller linux
-type devices, or when another full-featured library is not
-available or desired.
-
-I made this primary out of a very specific need and isn't really meant
-to be general purpose like OpenSSL or libgcrypt.
+Basically this is my wrapper around a much better library (libsodium)
+with some functions that libsodium doesn't include. In general, the
+libsodium routines are used with the exception of the algorithms not
+in NaCl, namely P-256 ECDSA/ECDH.
 
 # Getting yacl
 

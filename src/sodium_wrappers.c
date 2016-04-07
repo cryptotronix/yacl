@@ -20,6 +20,21 @@ yacl_memcmp(const void * const b1_, const void * const b2_, size_t len)
     return sodium_memcmp(b1_, b2_, len);
 }
 
+#ifndef HAVE_SODIUM_COMPARE
+#ifdef HAVE_WEAK_SYMBOLS
+__attribute__ ((weak)) void
+_sodium_dummy_symbol_to_prevent_compare_lto(const unsigned char *b1,
+                                            const unsigned char *b2,
+                                            const size_t len)
+{
+    (void) b1;
+    (void) b2;
+    (void) len;
+}
+#endif
+#endif
+
+
 int
 yacl_compare(const unsigned char *b1_, const unsigned char *b2_,
                    size_t len)

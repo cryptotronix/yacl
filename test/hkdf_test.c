@@ -150,7 +150,7 @@ t_hkdf_extract(void)
     unsigned char prk[YACL_SHA256_LEN+1];
     unsigned char okm[MAX_OKM_LEN+1];
 
-    memset (okm, 0, sizeof(okm));
+    yacl_memzero (okm, sizeof(okm));
 
 
     uint8_t ikm[] = {0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
@@ -173,7 +173,7 @@ t_hkdf_extract(void)
                          0x90, 0xb6, 0xc7, 0x3b, 0xb5, 0x0f, 0x9c, 0x31,
                          0x22, 0xec, 0x84, 0x4a, 0xd7, 0xc2, 0xb3, 0xe5 };
 
-    g_assert (0 == memcmp (prk, prk_kat, YACL_SHA256_LEN));
+    g_assert (0 == yacl_memcmp (prk, prk_kat, YACL_SHA256_LEN));
 
 
     uint8_t okm_kat[] = {0x3c, 0xb2, 0x5f, 0x25, 0xfa, 0xac, 0xd5, 0x7a,
@@ -272,7 +272,7 @@ t_hkdf_tc2(void)
 
     g_assert (0 == rc);
 
-    g_assert (0 == memcmp (okm_kat, okm, L));
+    g_assert (0 == yacl_memcmp (okm_kat, okm, L));
 
 }
 
@@ -305,7 +305,7 @@ t_hkdf_tc3(void)
 
     g_assert (0 == rc);
 
-    g_assert (0 == memcmp (okm_kat, okm, L));
+    g_assert (0 == yacl_memcmp (okm_kat, okm, L));
 
 }
 

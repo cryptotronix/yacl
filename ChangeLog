@@ -1,0 +1,6 @@
+* Version 0.3.7
+	- Started this a bit late :(
+	- Add wrapper functions for libsodium, which is a much better
+	library and will call libsodium if available. In the obscure case
+	where libsodium is not available, small core functions are used
+	directly by yacl.

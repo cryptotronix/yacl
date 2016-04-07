@@ -5,6 +5,7 @@
 
 #include "config.h"
 #include <stdint.h>
+#include "../../yacl.h"
 
 /* Platform selection options.
 If uECC_PLATFORM is not defined, the code will try to guess it based on compiler macros.
@@ -105,6 +106,7 @@ Outputs:
 
 Returns 1 if the key pair was generated successfully, 0 if an error occurred.
 */
+YACL_EXPORT
 int uECC_make_key(uint8_t public_key[uECC_BYTES*2], uint8_t private_key[uECC_BYTES]);
 
 /* uECC_shared_secret() function.
@@ -121,6 +123,7 @@ Outputs:
 
 Returns 1 if the shared secret was generated successfully, 0 if an error occurred.
 */
+YACL_EXPORT
 int uECC_shared_secret(const uint8_t public_key[uECC_BYTES*2],
                        const uint8_t private_key[uECC_BYTES],
                        uint8_t secret[uECC_BYTES]);
@@ -140,6 +143,7 @@ Outputs:
 
 Returns 1 if the signature generated successfully, 0 if an error occurred.
 */
+YACL_EXPORT
 int uECC_sign(const uint8_t private_key[uECC_BYTES],
               const uint8_t message_hash[uECC_BYTES],
               uint8_t signature[uECC_BYTES*2]);
@@ -230,6 +234,7 @@ Inputs:
 
 Returns 1 if the signature is valid, 0 if it is invalid.
 */
+YACL_EXPORT
 int uECC_verify(const uint8_t public_key[uECC_BYTES*2],
                 const uint8_t hash[uECC_BYTES],
                 const uint8_t signature[uECC_BYTES*2]);
