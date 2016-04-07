@@ -9,3 +9,4 @@ Version: @PACKAGE_VERSION@
 URL: @PACKAGE_URL@
 Libs: -L${libdir} -lyacl
 Cflags: -I${includedir}/yacl-@YACL_API_VERSION@
+Requires.private: libsodium
