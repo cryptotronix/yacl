@@ -158,7 +158,7 @@ t_hkdf_extract(void)
                      0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b};
 
     uint8_t salt[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                      0x08, 0x09, 0x0a, 0x0b, 0x0c, };
+                      0x08, 0x09, 0x0a, 0x0b, 0x0c };
 
     rc = yacl_hkdf_256_extract(salt,
                                sizeof(salt),
@@ -312,10 +312,11 @@ t_hkdf_tc3(void)
 
 int main(int argc, char *argv[])
 {
+    yacl_init();
     g_test_init (&argc, &argv, NULL);
 
-    g_test_add_func ("/hkdf/tc2", t_hkdf_tc2);
-    g_test_add_func ("/hkdf/t_hkdf_extract", t_hkdf_extract);
+    //g_test_add_func ("/hkdf/tc2", t_hkdf_tc2);
+    //g_test_add_func ("/hkdf/t_hkdf_extract", t_hkdf_extract);
     g_test_add_func ("/hkdf/tc3", t_hkdf_tc3);
 
     return g_test_run ();

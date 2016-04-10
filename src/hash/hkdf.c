@@ -87,9 +87,8 @@ yacl_hkdf_256_expand(const uint8_t prk[ ], int prk_len,
   if (N > 255)
     return -3;
 
-  /* setup hmac with gcrypt */
   size_t tmp_len = YACL_SHA256_LEN + info_len + 1;
-  uint8_t *tmp = malloc (YACL_SHA256_LEN + info_len + 1);
+  uint8_t *tmp = yacl_malloc (YACL_SHA256_LEN + info_len + 1);
   memset (tmp, 0, tmp_len);
 
   uint8_t result[YACL_SHA256_LEN];
@@ -110,7 +109,7 @@ yacl_hkdf_256_expand(const uint8_t prk[ ], int prk_len,
 
       if (rc)
         {
-          free (tmp);
+          yacl_free (tmp);
           return -4;
         }
 
@@ -121,7 +120,7 @@ yacl_hkdf_256_expand(const uint8_t prk[ ], int prk_len,
       Tlen = hash_len;
     }
 
-  free (tmp);
+  yacl_free (tmp);
 
   return rc;
 }

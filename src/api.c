@@ -21,7 +21,11 @@ yacl_init (void)
 int
 yacl_sha256 (const uint8_t *in, size_t len, uint8_t out[YACL_SHA256_LEN])
 {
-    return sha256 (in, len, out);
+#ifdef HAVE_LIBSODIUM
+  return crypto_hash_sha256 (out, in, len);
+#else
+  return sha256 (in, len, out);
+#endif
 }
 
 int
@@ -29,7 +33,14 @@ yacl_hmac_sha256(const uint8_t *key, size_t key_len,
                  const uint8_t *data, size_t data_len,
                  uint8_t mac[YACL_SHA256_LEN])
 {
-    return hmac_sha256(key, key_len, data, data_len, mac);
+#ifdef HAVE_LIBSODIUM
+  if (YACL_SHA256_LEN == key_len)
+    {
+      return crypto_auth_hmacsha256(mac, data, data_len, key);
+    }
+#endif
+
+  return hmac_sha256(key, key_len, data, data_len, mac);
 }
 
 int

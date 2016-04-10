@@ -17,6 +17,7 @@ libyacl_la_SOURCES = src/ecc/uECC.h \
                      src/hash/hkdf.c \
                      src/api.c \
                      src/sodium_wrappers.c \
+                     src/hexdump.c \
                      yacl.h
 
 if !HAVE_LIBSODIUM

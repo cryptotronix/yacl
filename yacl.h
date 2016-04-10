@@ -144,6 +144,10 @@ YACL_EXPORT
 int
 yacl_get_random(uint8_t *dest, size_t size);
 
+YACL_EXPORT
+void
+yacl_hexdump(const uint8_t *mem, size_t len);
+
 /* --- libsodium wrappers (uses libsodium if available) --- */
 YACL_EXPORT
 void yacl_memzero(void * const pnt, const size_t len);
