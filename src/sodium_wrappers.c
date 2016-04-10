@@ -189,7 +189,7 @@ char *
 yacl_bin2hex(char * const hex, const size_t hex_maxlen,
              const unsigned char * const bin, const size_t bin_len)
 {
-    return yacl_bin2hex(hex, hex_maxlen, bin,  bin_len);
+    return sodium_bin2hex(hex, hex_maxlen, bin,  bin_len);
 }
 
 int
