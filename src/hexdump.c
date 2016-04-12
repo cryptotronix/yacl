@@ -5,6 +5,9 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <assert.h>
+#ifdef HAVE_LIBGLIB
+#include <glib.h>
+#endif
 
 #if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 #pragma GCC diagnostic push
@@ -21,9 +24,19 @@
 #endif
 
 void
-yacl_hexdump(const uint8_t *mem, size_t len)
+yacl_hexdump(const uint8_t const *mem, size_t len)
 {
   unsigned int i, j;
+
+  if (NULL == mem)
+    {
+#ifdef HAVE_LIBGLIB
+      g_error ("ERROR, NULL in hexdump");
+#else
+      assert (mem);
+#endif
+    }
+
 
   for(i = 0; i < len + ((len % HEXDUMP_COLS) ? (HEXDUMP_COLS - len % HEXDUMP_COLS) : 0); i++)
     {

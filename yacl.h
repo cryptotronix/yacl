@@ -139,6 +139,16 @@ yacl_ecdh (const uint8_t public_key[YACL_P256_COORD_SIZE*2],
            const uint8_t private_key[YACL_P256_COORD_SIZE],
            uint8_t secret[YACL_P256_COORD_SIZE]);
 
+/* --- Base64 URL --- */
+YACL_EXPORT
+char *
+yacl_b64url_encode (const uint8_t *to_enc, size_t inlen);
+
+YACL_EXPORT
+uint8_t *
+yacl_b64url_decode (const char *text, size_t *out_len);
+
+
 /* --- Utils --- */
 YACL_EXPORT
 int
@@ -146,7 +156,8 @@ yacl_get_random(uint8_t *dest, size_t size);
 
 YACL_EXPORT
 void
-yacl_hexdump(const uint8_t *mem, size_t len);
+yacl_hexdump(const uint8_t const *mem, size_t len);
+
 
 /* --- libsodium wrappers (uses libsodium if available) --- */
 YACL_EXPORT

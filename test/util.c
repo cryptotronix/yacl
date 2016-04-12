@@ -225,6 +225,20 @@ t_yacl_utils (void)
 
 }
 
+static void
+t_hexdump (void)
+{
+    uint8_t t[16];
+    memset (t, 0x61, 16);
+    yacl_hexdump (t, 16);
+
+    if (g_test_subprocess ())
+        yacl_hexdump (NULL, 16);
+
+    g_test_trap_subprocess (NULL, 0, 0);
+    g_test_trap_assert_failed();
+}
+
 
 
 int main(int argc, char *argv[])
@@ -234,6 +248,7 @@ int main(int argc, char *argv[])
 
     g_test_add_func ("/util/t_test_random", t_test_random);
     g_test_add_func ("/util/t_yacl_util", t_yacl_utils);
+    g_test_add_func ("/util/t_hexdump", t_hexdump);
 
     return g_test_run ();
 }

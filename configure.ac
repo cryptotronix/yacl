@@ -1,6 +1,6 @@
 # Copyright (C) 2014 Cryptotronix, LLC.
 
-AC_INIT([yacl], [0.4.3], [bugs@cryptotronix.com], [yacl],
+AC_INIT([yacl], [0.5.0], [bugs@cryptotronix.com], [yacl],
         [https://github.com/cryptotronix/yacl])
 AC_PREREQ([2.59])
 AC_USE_SYSTEM_EXTENSIONS
@@ -24,7 +24,7 @@ AC_PROG_MKDIR_P
 # For information on how to properly maintain the library version information,
 # refer to the libtool manual, section "Updating library version information":
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-AC_SUBST([YACL_SO_VERSION], [5:0:0])
+AC_SUBST([YACL_SO_VERSION], [6:0:0])
 AC_SUBST([YACL_API_VERSION], [1.0])
 
 # uECC settings
@@ -41,8 +41,15 @@ LDFLAGS="$LDFLAGS -O3 -march=native"])
 
 PKG_PROG_PKG_CONFIG
 
-#LIBGLIB for unit tests
-PKG_CHECK_MODULES([LIBGLIB], [glib-2.0])
+AC_ARG_WITH([libglib],
+  AS_HELP_STRING([--with-libglib], [Link against libglib]))
+AM_CONDITIONAL([HAVE_LIBGLIB], [test "x$with_libglib" = "xyes"])
+
+AS_IF([test "x$with_libglib" = "xyes"], [
+  AC_DEFINE([HAVE_LIBGLIB], [1], [Linking against libglib])
+  PKG_CHECK_MODULES([LIBGLIB], [glib-2.0])
+  AC_DEFINE([HAVE_LIBGLIB], [1], [Have libglib])
+])
 
 AC_ARG_WITH([guile],
         AS_HELP_STRING([--with-guile], [Build the guile extensions]))
@@ -91,11 +98,17 @@ AC_DEFINE([WANT_ARM_ASM], [1], [Use arm asm])
 
 dnl Checks
 
-AC_PROG_CC_C99
 AM_PROG_AS
 AC_USE_SYSTEM_EXTENSIONS
 
 AC_CHECK_DEFINE([__native_client__], [NATIVECLIENT="yes"], [])
+
+AX_CHECK_COMPILE_FLAG([-std=gnu11], [
+  CFLAGS+=" -std=gnu11"
+], [
+  echo "C compiler cannot compile C11 code"
+  exit -1
+])
 
 AC_CHECK_DEFINE([_FORTIFY_SOURCE], [], [
   AX_CHECK_COMPILE_FLAG([-D_FORTIFY_SOURCE=2],
@@ -593,7 +606,7 @@ gl_LD_OUTPUT_DEF
 
 # Override the template file name of the generated .pc file, so that there
 # is no need to rename the template file when the API version changes.
-AC_CONFIG_FILES([Makefile test/Makefile yacl.pc:yacl.pc.in])
+AC_CONFIG_FILES([Makefile test/Makefile src/guile/Makefile yacl.pc:yacl.pc.in])
 
 AC_OUTPUT
 

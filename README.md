@@ -11,11 +11,20 @@ Yet Another Crypto Library
 Basically this is my wrapper around a much better library (libsodium)
 with some functions that libsodium doesn't include. In general, the
 libsodium routines are used with the exception of the algorithms not
-in NaCl, namely P-256 ECDSA/ECDH.
+in NaCl.
+
+These algorithms are:
+ - ECDSA/ECDH for P-256
+ - HMAC 256 using a non-32 byte key (libsodium restricts the key
+   length to 32 bytes).
+ - HKDF-HMAC-SHA256
 
 # Getting yacl
 
-Probably best to pull the latest
+On Ubuntu:
+Check the [Cryptotronix PPA](https://launchpad.net/~cryptotronix/+archive/ubuntu/ppa).
+
+Otherwise, probably best to pull the latest
 [release](https://github.com/cryptotronix/yacl/releases). Otherwise,
 you'll need autotools to build this from source. It follows the normal
 autotools dance.

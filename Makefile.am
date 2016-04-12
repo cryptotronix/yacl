@@ -6,7 +6,13 @@ ACLOCAL_AMFLAGS = -I m4
 
 lib_LTLIBRARIES = libyacl.la
 
-SUBDIRS = . test
+SUBDIRS = .
+if HAVE_LIBGLIB
+SUBDIRS += test
+endif
+if HAVE_GUILE
+SUBDIRS += src/guile
+endif
 
 AM_YFLAGS = -d
 
@@ -18,6 +24,8 @@ libyacl_la_SOURCES = src/ecc/uECC.h \
                      src/api.c \
                      src/sodium_wrappers.c \
                      src/hexdump.c \
+                     src/base64url.c \
+                     src/base64url.h \
                      yacl.h
 
 if !HAVE_LIBSODIUM
@@ -44,10 +52,17 @@ endif
 if HAVE_GUILE
 libyacl_la_SOURCES += src/guile/extension.c \
                       src/guile/extension.h
+
 endif
 
-libyacl_la_CPPFLAGS = $(DEPS_CFLAGS) $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS)
-libyacl_la_LIBADD = $(DEPS_LIBS) $(GUILE_LIBS) $(LIBSODIUM_CLFAGS)
+# SCM_SOURCES = src/guile/cryptotronix/yacl.scm
+# pkgguilesitedir = $(GUILE_SITE)
+# nobase_dist_pkgguilesite_DATA = $(SCM_SOURCES)
+# ETAGS_ARGS = $(SCM_SOURCES)
+# endif
+
+libyacl_la_CPPFLAGS = $(DEPS_CFLAGS) $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS) $(LIBGLIB_CFLAGS)
+libyacl_la_LIBADD = $(DEPS_LIBS) $(GUILE_LIBS) $(LIBSODIUM_LIBS) $(LIBGLIB_LIBS)
 
 
 libyacl_la_LDFLAGS = -version-info $(YACL_SO_VERSION) -release $(YACL_API_VERSION)

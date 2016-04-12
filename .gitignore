@@ -90,3 +90,6 @@ snippet/
 /m4/ltsugar.m4
 /m4/ltversion.m4
 /m4/lt~obsolete.m4
+/src/guile/Makefile
+/src/guile/Makefile.in
+/src/guile/TAGS

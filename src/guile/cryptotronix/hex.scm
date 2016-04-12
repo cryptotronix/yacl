@@ -1,5 +1,5 @@
 (define-module (cryptotronix hex)
-  #:version (0 1)
+  #:version (0 2)
   #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 format)
@@ -10,8 +10,12 @@
   #:export (hex->bin
             hex->list
             hex->ascii
-            bytevector->hex-string))
+            hex-string->bytevector
+            hex-string->list
+            bytevector->hex-string
+            ))
 
+(load-extension "/usr/local/lib/libyacl" "yacl_init_guile")
 
 (define (%numstr->bin str final base)
   (define len (string-length str))
@@ -35,3 +39,11 @@
   (string-join (map (lambda (e) (format #f "~2,'0x" e))
                     (bytevector->u8-list bv))
                ":"))
+
+(define (yacl-trim str) (string-filter char-set:letter+digit str))
+
+(define (hex-string->bytevector hex)
+  (hex->bin (trim hex)))
+
+(define (hex-string->list lst)
+  (hex->list (trim lst)))
