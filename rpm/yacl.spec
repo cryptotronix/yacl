@@ -5,12 +5,12 @@
 %define _libdir %{_prefix}/lib64
 
 Name: yacl
-Version: 0.3.6
+Version: 0.5.0
 Release: 0
 Summary: yacl library
 License: see %{pkgdocdir}/copyright
 
-%define packagebase yacl-0.3.6
+%define packagebase yacl-0.5.0
 
 Group: System Environment/Libraries
 Source: %{packagebase}.tar.gz
@@ -41,7 +41,7 @@ This package contains static libraries to develop applications that use yacl.
 %setup -n %{packagebase}
 
 %build
-%configure --with-guile
+%configure --with-guile --with-libsodium --with-libglib
 
 make %{?_smp_mflags}
 
@@ -70,9 +70,10 @@ make install-strip DESTDIR=%{buildroot}
 %defattr( -, root, root )
 #%define _prefix /
 /usr/lib64/pkgconfig/yacl.pc
-/usr/include/yacl-0.3/*
+/usr/include/yacl-1.0/*
 /usr/lib64/*.so
 /usr/lib64/*.so.*
+/usr/share/guile/site/2.0/cryptotronix/*
 
 %files static
 %defattr(-,root,root)

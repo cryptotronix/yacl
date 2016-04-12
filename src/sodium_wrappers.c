@@ -132,8 +132,9 @@ yacl_increment(unsigned char *n, const size_t nlen)
         n[i] = (unsigned char) c;
         c >>= 8;
     }
+#endif /* HAVE_SODIUM_INCREMENT */
 }
-#endif
+
 
 void
 yacl_add(unsigned char *a, const unsigned char *b, const size_t len)
