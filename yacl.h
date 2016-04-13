@@ -139,6 +139,19 @@ yacl_ecdh (const uint8_t public_key[YACL_P256_COORD_SIZE*2],
            const uint8_t private_key[YACL_P256_COORD_SIZE],
            uint8_t secret[YACL_P256_COORD_SIZE]);
 
+/* --- AES --- */
+
+YACL_EXPORT
+/* Only works for wrapped keys (wkey) of 32 bytes.
+   @out: is a buffer of 40 bytes */
+int
+yacl_aes_key_wrap(const uint8_t *kek, size_t kek_len,
+                  const uint8_t *wkey, uint8_t *out);
+
+YACL_EXPORT
+int yacl_aes_unwrap(const uint8_t *kek, size_t kek_len,
+                    const uint8_t *cipher, uint8_t *plain);
+
 /* --- Base64 URL --- */
 YACL_EXPORT
 char *

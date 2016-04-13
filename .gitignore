@@ -98,3 +98,6 @@ snippet/
 /test/basic
 /test/basic.log
 /test/basic.trs
+/test/aes
+/test/aes.log
+/test/aes.trs

@@ -30,5 +30,5 @@ hkdf_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS)
 
 util_SOURCES = util.c
 util_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)
-util_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS)
+util_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS) ../src/aes/libaes.la
 endif

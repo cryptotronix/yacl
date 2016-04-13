@@ -6,7 +6,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 lib_LTLIBRARIES = libyacl.la
 
-SUBDIRS = . src/aes test
+SUBDIRS = src/aes . test
 
 if HAVE_GUILE
 SUBDIRS += src/guile

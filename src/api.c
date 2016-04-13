@@ -11,6 +11,7 @@
 #else
 #include "libsodium/sodium.h"
 #endif
+#include "aes/aes_wrap.h"
 
 int
 yacl_init (void)
@@ -148,4 +149,19 @@ yacl_ecdh (const uint8_t public_key[YACL_P256_COORD_SIZE*2],
     rc = 1;
 
   return rc;
+}
+
+int
+yacl_aes_key_wrap(const uint8_t *kek, size_t kek_len,
+                  const uint8_t *wkey, uint8_t *out)
+{
+  return aes_wrap(kek, kek_len, 4, wkey, out);
+}
+
+
+int
+yacl_aes_unwrap(const uint8_t *kek, size_t kek_len,
+                const uint8_t *cipher, uint8_t *plain)
+{
+  return aes_unwrap(kek, kek_len, 4, cipher, plain);
 }
