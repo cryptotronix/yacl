@@ -93,3 +93,8 @@ snippet/
 /src/guile/Makefile
 /src/guile/Makefile.in
 /src/guile/TAGS
+/src/aes/Makefile
+/src/aes/Makefile.in
+/test/basic
+/test/basic.log
+/test/basic.trs

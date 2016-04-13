@@ -6,9 +6,15 @@ basic_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)
 basic_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS)
 basic_LDFLAGS = -all-static
 
+TESTS = aes
+check_PROGRAMS = aes
+
+aes_SOURCES = test-aes.c
+aes_LDADD = ../src/aes/libaes.la
+
 if HAVE_LIBGLIB
-TESTS = ecc hmac util hkdf
-check_PROGRAMS = ecc hmac util hkdf
+TESTS += ecc hmac util hkdf
+check_PROGRAMS += ecc hmac util hkdf
 
 ecc_SOURCES = ecc.c
 ecc_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)

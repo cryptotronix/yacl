@@ -8,7 +8,7 @@
 
 #include "includes.h"
 
-#include "common/ieee802_11_defs.h"
+//#include "common/ieee802_11_defs.h"
 #include "common.h"
 
 
@@ -594,32 +594,6 @@ size_t printf_decode(u8 *buf, size_t maxlen, const char *str)
 }
 
 
-/**
- * wpa_ssid_txt - Convert SSID to a printable string
- * @ssid: SSID (32-octet string)
- * @ssid_len: Length of ssid in octets
- * Returns: Pointer to a printable string
- *
- * This function can be used to convert SSIDs into printable form. In most
- * cases, SSIDs do not use unprintable characters, but IEEE 802.11 standard
- * does not limit the used character set, so anything could be used in an SSID.
- *
- * This function uses a static buffer, so only one call can be used at the
- * time, i.e., this is not re-entrant and the returned buffer must be used
- * before calling this again.
- */
-const char * wpa_ssid_txt(const u8 *ssid, size_t ssid_len)
-{
-	static char ssid_txt[SSID_MAX_LEN * 4 + 1];
-
-	if (ssid == NULL) {
-		ssid_txt[0] = '\0';
-		return ssid_txt;
-	}
-
-	printf_encode(ssid_txt, sizeof(ssid_txt), ssid, ssid_len);
-	return ssid_txt;
-}
 
 
 void * __hide_aliasing_typecast(void *foo)
