@@ -158,7 +158,7 @@ int main(void) { return 0; }
   ])
 
 LIBTOOL_OLD_FLAGS="$LIBTOOL_EXTRA_FLAGS"
-LIBTOOL_EXTRA_FLAGS="$LIBTOOL_EXTRA_FLAGS -version-info $SODIUM_LIBRARY_VERSION"
+LIBTOOL_EXTRA_FLAGS="$LIBTOOL_EXTRA_FLAGS -version-info $YACL_SO_VERSION"
 AC_ARG_ENABLE(soname-versions,
   [AC_HELP_STRING([--enable-soname-versions], [enable soname versions (must be disabled for Android) (default: enabled)])],
     [
