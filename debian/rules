@@ -21,7 +21,7 @@ include /usr/share/dpkg/default.mk
 %:
 	dh $@  --with autotools-dev
 override_dh_auto_configure:
-	dh_auto_configure -- --with-guile --with-libsodium
+	dh_auto_configure -- --with-guile --with-libsodium --with-libglib
 
 # debmake generated override targets
 # This is example for Cmake (See http://bugs.debian.org/641051 )

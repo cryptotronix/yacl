@@ -6,10 +6,8 @@ ACLOCAL_AMFLAGS = -I m4
 
 lib_LTLIBRARIES = libyacl.la
 
-SUBDIRS = .
-if HAVE_LIBGLIB
-SUBDIRS += test
-endif
+SUBDIRS = . test
+
 if HAVE_GUILE
 SUBDIRS += src/guile
 endif
