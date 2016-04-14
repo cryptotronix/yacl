@@ -14,6 +14,17 @@
 
 #define BLOCK_SIZE 16
 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic push
+#endif
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Winitializer-overrides"
+#pragma GCC diagnostic ignored "-Woverride-init"
+#pragma GCC diagnostic ignored "-Wcast-qual"
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
+
 static void test_aes_perf(void)
 {
 #if 0 /* this did not seem to work with new compiler?! */
@@ -238,6 +249,8 @@ static int test_gcm(void)
 	u8 p[64], c[64], tmp[64];
 	size_t k_len, p_len, aad_len, iv_len;
 
+        printf ("testing gcm\n");
+
 	for (i = 0; i < ARRAY_SIZE(gcm_tests); i++) {
 		const struct gcm_test_vector *tc = &gcm_tests[i];
 
@@ -281,12 +294,33 @@ static int test_gcm(void)
 			continue;
 		}
 
+                if (k_len == 32 && iv_len == 12)
+                {
+                    printf ("k: %s\n", tc->k);
+                    printf ("iv: %s\n", tc->iv);
+                    printf ("p: %s\n", tc->p);
+                    printf ("aad: %s\n", tc->aad);
+                }
+
+
 		if (aes_gcm_ae(k, k_len, iv, iv_len, p, p_len, aad, aad_len,
 			       tmp, tag) < 0) {
 			printf("GCM-AE failed (test case %d)\n", i);
 			ret++;
 			continue;
 		}
+                else if (k_len == 32 && iv_len == 12)
+                {
+                    for (int i=0; i< sizeof tmp; i++)
+                        printf ("%02X", tmp[i]);
+                    printf ("\n");
+                    for (int i=0; i< sizeof tag; i++)
+                        printf ("%02X", tag[i]);
+                    printf ("\n");
+                    printf ("k_len: %lu, iv_len: %lu, p_len: %lu, aad_len: %lu\n", k_len, iv_len, p_len, aad_len);
+
+
+                }
 
 		if (os_memcmp(c, tmp, p_len) != 0) {
 			printf("GCM-AE mismatch (test case %d)\n", i);
@@ -318,6 +352,10 @@ static int test_gcm(void)
 			ret++;
 			continue;
 		}
+                else
+                {
+                    printf ("uyup\n");
+                }
 
 		if (os_memcmp(p, tmp, p_len) != 0) {
 			printf("GCM-AD mismatch (test case %d)\n", i);
@@ -622,3 +660,7 @@ int main(int argc, char *argv[])
 
 	return ret;
 }
+
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#pragma GCC diagnostic pop
+#endif

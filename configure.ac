@@ -1,6 +1,6 @@
 # Copyright (C) 2014 Cryptotronix, LLC.
 
-AC_INIT([yacl], [0.5.0], [bugs@cryptotronix.com], [yacl],
+AC_INIT([yacl], [1.0.0], [bugs@cryptotronix.com], [yacl],
         [https://github.com/cryptotronix/yacl])
 AC_PREREQ([2.59])
 AC_USE_SYSTEM_EXTENSIONS
@@ -20,11 +20,18 @@ AM_PROG_AR
 
 AC_PROG_MKDIR_P
 
-# Define these substitions here to keep all version information in one place.
-# For information on how to properly maintain the library version information,
-# refer to the libtool manual, section "Updating library version information":
-# http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-AC_SUBST([YACL_SO_VERSION], [6:0:0])
+AC_SUBST([YACL_SO_VERSION], [7:0:0])
+#                            | | |
+#                     +------+ | +---+
+#                     |        |     |
+#                  current:revision:age
+#                     |        |     |
+#                     |        |     +- increment if interfaces have been added
+#                     |        |        set to zero if interfaces have been removed
+#                     |        |        or changed
+#                     |        +- increment if source code has changed
+#                     |           set to zero if current is incremented
+#                     +- increment if interfaces have been added, removed or changed
 AC_SUBST([YACL_API_VERSION], [1.0])
 
 # uECC settings
@@ -77,6 +84,10 @@ AS_IF([test "x$with_libsodium" = "xyes"], [
             AC_CHECK_LIB([sodium], [sodium_add],
                          [AC_DEFINE([HAVE_SODIUM_ADD], [1], [Have sodium_add])],
                          [])
+
+            AC_CHECK_LIB([sodium], [crypto_aead_aes256gcm_is_available],
+                        [AC_DEFINE([HAVE_SODIUM_GCM], [1], [Have sodium aes gcm])],
+                        [])
 
 ])
 

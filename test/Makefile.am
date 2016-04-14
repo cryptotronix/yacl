@@ -17,8 +17,8 @@ aes_SOURCES = test-aes.c
 aes_LDADD = ../src/aes/libaes.la
 
 if HAVE_LIBGLIB
-TESTS += ecc hmac util hkdf
-check_PROGRAMS += ecc hmac util hkdf
+TESTS += ecc hmac util hkdf aes-yacl
+check_PROGRAMS += ecc hmac util hkdf aes-yacl
 
 ecc_SOURCES = ecc.c
 ecc_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)
@@ -35,4 +35,8 @@ hkdf_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS)
 util_SOURCES = util.c
 util_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)
 util_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS) ../src/aes/libaes.la
+
+aes_yacl_SOURCES = aes-yacl.c
+aes_yacl_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)
+aes_yacl_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS) ../src/aes/libaes.la
 endif

@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
-#include <glib.h>
-
+#include <string.h>
 
 int main(int argc, char *argv[])
 {
@@ -59,7 +58,7 @@ int main(int argc, char *argv[])
     memset (wkey, 0x61, 32);
   uint8_t kw_buf[40];
 
-  rc = yacl_aes_key_wrap(line, s, wkey, kw_buf);
+  rc = yacl_aes_wrap(line, s, wkey, kw_buf);
   if (0 == rc)
     {
       assert (0 == yacl_aes_unwrap(line, s, kw_buf, wkey2));

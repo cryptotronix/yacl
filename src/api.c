@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <assert.h>
 #include "../yacl.h"
 #include "hash/sha256.h"
 #include "ecc/uECC.h"
@@ -12,6 +13,7 @@
 #include "libsodium/sodium.h"
 #endif
 #include "aes/aes_wrap.h"
+
 
 int
 yacl_init (void)
@@ -152,7 +154,7 @@ yacl_ecdh (const uint8_t public_key[YACL_P256_COORD_SIZE*2],
 }
 
 int
-yacl_aes_key_wrap(const uint8_t *kek, size_t kek_len,
+yacl_aes_wrap(const uint8_t *kek, size_t kek_len,
                   const uint8_t *wkey, uint8_t *out)
 {
   return aes_wrap(kek, kek_len, 4, wkey, out);
@@ -164,4 +166,99 @@ yacl_aes_unwrap(const uint8_t *kek, size_t kek_len,
                 const uint8_t *cipher, uint8_t *plain)
 {
   return aes_unwrap(kek, kek_len, 4, cipher, plain);
+}
+
+
+int
+yacl_aes_gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
+                     const uint8_t *aad, size_t aad_len,
+                     const uint8_t *key, size_t key_len,
+                     const uint8_t *nonce, size_t nonce_len,
+                     uint8_t *tag, size_t tag_len,
+                     uint8_t *ciphertext, size_t c_len)
+
+{
+  if (crypto_aead_aes256gcm_NPUBBYTES != nonce_len)
+    return -1;
+
+  if (plaintext_len != c_len)
+    return -1;
+
+  if (crypto_aead_aes256gcm_KEYBYTES != key_len)
+    return -1;
+
+  if (crypto_aead_aes256gcm_ABYTES != tag_len)
+    return -1;
+
+#ifdef HAVE_LIBSODIUM
+#ifdef HAVE_SODIUM_GCM
+  if (crypto_aead_aes256gcm_is_available())
+    {
+      return crypto_aead_aes256gcm_encrypt_detached(ciphertext,
+                                                    tag,
+                                                    NULL,
+                                                    plaintext,
+                                                    tag_len,
+                                                    aad,
+                                                    aad_len,
+                                                    NULL,
+                                                    nonce,
+                                                    key);
+    }
+#endif
+#endif
+
+  return aes_gcm_ae(key, key_len,
+                    nonce, nonce_len,
+                    plaintext, plaintext_len,
+                    aad, aad_len,
+                    ciphertext,
+                    tag);
+
+}
+
+
+int
+yacl_aes_gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
+                     const uint8_t *aad, size_t aad_len,
+                     const uint8_t *key, size_t key_len,
+                     const uint8_t *nonce, size_t nonce_len,
+                     const uint8_t *tag, size_t tag_len,
+                     uint8_t *plaintext, size_t plaintext_len)
+{
+  if (crypto_aead_aes256gcm_NPUBBYTES != nonce_len)
+    return -1;
+
+  if (plaintext_len != ciphertext_len)
+    return -1;
+
+  if (crypto_aead_aes256gcm_KEYBYTES != key_len)
+    return -1;
+
+  if (crypto_aead_aes256gcm_ABYTES != tag_len)
+    return -1;
+
+#ifdef HAVE_LIBSODIUM
+#ifdef HAVE_SODIUM_GCM
+  if (crypto_aead_aes256gcm_is_available())
+    {
+      return crypto_aead_aes256gcm_decrypt_detached(plaintext,
+                                                    NULL,
+                                                    ciphertext,
+                                                    ciphertext_len,
+                                                    tag,
+                                                    aad,
+                                                    aad_len,
+                                                    nonce,
+                                                    key);
+    }
+#endif
+#endif
+
+  return aes_gcm_ad(key, key_len,
+                    nonce, nonce_len,
+                    ciphertext, ciphertext_len,
+                    aad, aad_len,
+                    tag,
+                    plaintext);
 }

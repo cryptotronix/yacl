@@ -9,25 +9,7 @@
 #ifdef YACL_STATIC
 # define YACL_EXPORT
 #else
-# if defined(_MSC_VER)
-#  ifdef YACL_DLL_EXPORT
-#   define YACL_EXPORT __declspec(dllexport)
-#  else
-#   define YACL_EXPORT __declspec(dllimport)
-#  endif
-# else
-#  if defined(__SUNPRO_C)
-#   ifndef __GNU_C__
-#    define YACL_EXPORT __attribute__ (visibility(__global))
-#   else
-#    define YACL_EXPORT __attribute__ __global
-#   endif
-#  elif defined(_MSG_VER)
-#   define YACL_EXPORT extern __declspec(dllexport)
-#  else
-#   define YACL_EXPORT __attribute__ ((visibility ("default")))
-#  endif
-# endif
+# define YACL_EXPORT __attribute__ ((visibility ("default")))
 #endif
 
 YACL_EXPORT
@@ -145,13 +127,45 @@ YACL_EXPORT
 /* Only works for wrapped keys (wkey) of 32 bytes.
    @out: is a buffer of 40 bytes */
 int
-yacl_aes_key_wrap(const uint8_t *kek, size_t kek_len,
-                  const uint8_t *wkey, uint8_t *out);
+yacl_aes_wrap(const uint8_t *kek, size_t kek_len,
+              const uint8_t *wkey, uint8_t *out);
 
 YACL_EXPORT
-int yacl_aes_unwrap(const uint8_t *kek, size_t kek_len,
-                    const uint8_t *cipher, uint8_t *plain);
+int
+yacl_aes_unwrap(const uint8_t *kek, size_t kek_len,
+                const uint8_t *cipher, uint8_t *plain);
 
+/* --- Definitions --- */
+#ifndef crypto_aead_aes256gcm_NPUBBYTES
+#define crypto_aead_aes256gcm_NPUBBYTES 12
+#endif
+
+#ifndef crypto_aead_aes256gcm_ABYTES
+#define crypto_aead_aes256gcm_ABYTES 16
+#endif
+
+#ifndef crypto_aead_aes256gcm_KEYBYTES
+#define crypto_aead_aes256gcm_KEYBYTES 32
+#endif
+
+
+YACL_EXPORT
+int
+yacl_aes_gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
+                     const uint8_t *aad, size_t aad_len,
+                     const uint8_t *key, size_t key_len,
+                     const uint8_t *nonce, size_t nonce_len,
+                     uint8_t *tag, size_t tag_len,
+                     uint8_t *ciphertext, size_t c_len);
+
+YACL_EXPORT
+int
+yacl_aes_gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
+                     const uint8_t *aad, size_t aad_len,
+                     const uint8_t *key, size_t key_len,
+                     const uint8_t *nonce, size_t nonce_len,
+                     const uint8_t *tag, size_t tag_len,
+                     uint8_t *plaintext, size_t plaintextlen);
 /* --- Base64 URL --- */
 YACL_EXPORT
 char *
