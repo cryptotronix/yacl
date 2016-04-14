@@ -1,10 +1,14 @@
 # Copyright (C) 2014-2016 Cryptotronix, LLC.
-bin_PROGRAMS = basic
+bin_PROGRAMS = basic afl
 
 basic_SOURCES = basic.c
 basic_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)
 basic_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS)
 basic_LDFLAGS = -all-static
+
+afl_SOURCES = afl.c
+afl_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)
+afl_LDADD = ../libyacl.la $(LIBGLIB_LIBS) $(LIBSODIUM_LIBS)
 
 TESTS = aes
 check_PROGRAMS = aes
