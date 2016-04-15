@@ -89,6 +89,14 @@ AS_IF([test "x$with_libsodium" = "xyes"], [
                         [AC_DEFINE([HAVE_SODIUM_GCM], [1], [Have sodium aes gcm])],
                         [])
 
+            AC_CHECK_LIB([sodium], [crypto_aead_aes256gcm_encrypt_detached],
+                        [AC_DEFINE([HAVE_SODIUM_GCM_ENCRYPT], [1], [Have sodium aes gcm])],
+                        [])
+
+            AC_CHECK_LIB([sodium], [crypto_aead_aes256gcm_decrypt_detached],
+                        [AC_DEFINE([HAVE_SODIUM_GCM_DECRYPT], [1], [Have sodium aes gcm])],
+                        [])
+
 ])
 
 AS_IF([test "x$with_guile" = "xyes"], [

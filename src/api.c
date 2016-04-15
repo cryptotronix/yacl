@@ -190,8 +190,8 @@ yacl_aes_gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
   if (crypto_aead_aes256gcm_ABYTES != tag_len)
     return -1;
 
-#ifdef HAVE_LIBSODIUM
-#ifdef HAVE_SODIUM_GCM
+#if defined HAVE_LIBSODIUM && defined HAVE_SODIUM_GCM && defined HAVE_SODIUM_GCM_ENCRYPT
+
   if (crypto_aead_aes256gcm_is_available())
     {
       return crypto_aead_aes256gcm_encrypt_detached(ciphertext,
@@ -205,7 +205,6 @@ yacl_aes_gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
                                                     nonce,
                                                     key);
     }
-#endif
 #endif
 
   return aes_gcm_ae(key, key_len,
@@ -238,8 +237,7 @@ yacl_aes_gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
   if (crypto_aead_aes256gcm_ABYTES != tag_len)
     return -1;
 
-#ifdef HAVE_LIBSODIUM
-#ifdef HAVE_SODIUM_GCM
+#if defined HAVE_LIBSODIUM && defined HAVE_SODIUM_GCM && defined HAVE_SODIUM_GCM_DECRYPT
   if (crypto_aead_aes256gcm_is_available())
     {
       return crypto_aead_aes256gcm_decrypt_detached(plaintext,
@@ -252,7 +250,6 @@ yacl_aes_gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
                                                     nonce,
                                                     key);
     }
-#endif
 #endif
 
   return aes_gcm_ad(key, key_len,
