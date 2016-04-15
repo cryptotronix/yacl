@@ -30,7 +30,8 @@ libaes_la_SOURCES = aes-cbc.c \
                     wpa_debug.h \
                     wpabuf.c \
                     wpabuf.h \
-                    crypto.h
+                    crypto.h \
+                    includes.h
 
 
 
