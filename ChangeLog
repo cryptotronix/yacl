@@ -1,3 +1,6 @@
+* Version 1.0.0
+ 	- Adds AES key wrap functions
+	- Adds AES GCM functions
 * Version 0.4.2
 	- Started this a bit late :(
 	- Add wrapper functions for libsodium, which is a much better

@@ -1,3 +1,9 @@
+yacl (1.0.0-0ubuntu0) trusty; urgency=medium
+
+  * Adds AES key wrap and GCM functions
+
+ -- Joshua Brian Datko <jbd@cryptotronix.com>  Thu, 14 Apr 2016 14:10:49 -0600
+
 yacl (0.5.0-0ubuntu0) trusty; urgency=medium
 
   * Cleans up the guile extensions. Most of the yacl API is now available via guile.
