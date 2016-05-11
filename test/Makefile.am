@@ -1,5 +1,5 @@
 # Copyright (C) 2014-2016 Cryptotronix, LLC.
-bin_PROGRAMS = basic afl
+noinst_PROGRAMS = basic afl
 
 basic_SOURCES = basic.c
 basic_CFLAGS = $(LIBGLIB_CFLAGS) $(LIBSODIUM_CFLAGS)
