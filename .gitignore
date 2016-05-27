@@ -101,3 +101,5 @@ snippet/
 /test/aes
 /test/aes.log
 /test/aes.trs
+*.log
+*.trs

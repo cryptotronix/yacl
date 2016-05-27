@@ -9,7 +9,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "os.h"
+//#include "os.h"
 
 #if defined(__linux__) || defined(__GLIBC__)
 #include <endian.h>
@@ -503,7 +503,7 @@ static inline int is_multicast_ether_addr(const u8 *a)
 
 #define broadcast_ether_addr (const u8 *) "\xff\xff\xff\xff\xff\xff"
 
-#include "wpa_debug.h"
+//#include "wpa_debug.h"
 
 
 struct wpa_freq_range_list {

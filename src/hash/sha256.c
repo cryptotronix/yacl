@@ -9,6 +9,30 @@
 #include "config.h"
 #include "sha256.h"
 
+static inline u32 WPA_GET_BE32(const u8 *a)
+{
+    return ((u32) a[0] << 24) | (a[1] << 16) | (a[2] << 8) | a[3];
+}
+
+static inline void WPA_PUT_BE64(u8 *a, u64 val)
+{
+    a[0] = val >> 56;
+    a[1] = val >> 48;
+    a[2] = val >> 40;
+    a[3] = val >> 32;
+    a[4] = val >> 24;
+    a[5] = val >> 16;
+    a[6] = val >> 8;
+    a[7] = val & 0xff;
+}
+
+static inline void WPA_PUT_BE32(u8 *a, u32 val)
+{
+    a[0] = (val >> 24) & 0xff;
+    a[1] = (val >> 16) & 0xff;
+    a[2] = (val >> 8) & 0xff;
+    a[3] = val & 0xff;
+}
 
 /**
  * hmac_sha256_vector - HMAC-SHA256 over data vector (RFC 2104)

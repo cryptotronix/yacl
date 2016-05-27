@@ -183,8 +183,8 @@ static void * aes_gcm_init_hash_subkey(const u8 *key, size_t key_len, u8 *H)
 	/* Generate hash subkey H = AES_K(0^128) */
 	os_memset(H, 0, AES_BLOCK_SIZE);
 	aes_encrypt(aes, H, H);
-	wpa_hexdump_key(MSG_EXCESSIVE, "Hash subkey H for GHASH",
-			H, AES_BLOCK_SIZE);
+	//wpa_hexdump_key(MSG_EXCESSIVE, "Hash subkey H for GHASH",
+        //H, AES_BLOCK_SIZE);
 	return aes;
 }
 
@@ -244,7 +244,7 @@ static void aes_gcm_ghash(const u8 *H, const u8 *aad, size_t aad_len,
 	WPA_PUT_BE64(len_buf + 8, crypt_len * 8);
 	ghash(H, len_buf, sizeof(len_buf), S);
 
-	wpa_hexdump_key(MSG_EXCESSIVE, "S = GHASH_H(...)", S, 16);
+	//wpa_hexdump_key(MSG_EXCESSIVE, "S = GHASH_H(...)", S, 16);
 }
 
 
@@ -311,7 +311,7 @@ int aes_gcm_ad(const u8 *key, size_t key_len, const u8 *iv, size_t iv_len,
 	aes_encrypt_deinit(aes);
 
 	if (os_memcmp_const(tag, T, 16) != 0) {
-		wpa_printf(MSG_EXCESSIVE, "GCM: Tag mismatch");
+            //wpa_printf(MSG_EXCESSIVE, "GCM: Tag mismatch");
 		return -1;
 	}
 

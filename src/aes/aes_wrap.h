@@ -18,8 +18,15 @@
 #ifndef AES_WRAP_H
 #define AES_WRAP_H
 
-#include "common.h"
+//#include "common.h"
 #include "../../yacl.h"
+#ifndef __must_check
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+#define __must_check __attribute__((__warn_unused_result__))
+#else
+#define __must_check
+#endif /* __GNUC__ */
+#endif /* __must_check */
 
 YACL_EXPORT
 int __must_check aes_wrap(const u8 *kek, size_t kek_len, int n, const u8 *plain,

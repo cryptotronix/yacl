@@ -14,11 +14,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "../../yacl.h"
-#include "../aes/common.h"
 
-/* #define u8 uint8_t */
-/* #define u32 uint32_t */
-/* #define u64 uint64_t */
+#define u8 uint8_t
+#define u32 uint32_t
+#define u64 uint64_t
 
 /* #define WPA_GET_BE32(a) ((((u32) (a)[0]) << 24) | (((u32) (a)[1]) << 16) | \ */
 /* 			 (((u32) (a)[2]) << 8) | ((u32) (a)[3])) */

@@ -115,6 +115,13 @@ AS_IF([test "x$enable_arm_asm" = "xyes"], [
 AC_DEFINE([WANT_ARM_ASM], [1], [Use arm asm])
 ])
 
+dnl Example of default-enabled feature
+AC_ARG_ENABLE([tests],
+AS_HELP_STRING([--disable-tests], [Disable tests--useful for cross compiling]))
+
+AM_CONDITIONAL([WANT_TESTS], [test "x$enable_tests" = "xyes"])
+
+
 dnl Checks
 
 AM_PROG_AS

@@ -21,18 +21,8 @@ libaes_la_SOURCES = aes-cbc.c \
                     aes-unwrap.c \
                     aes-wrap.c \
                     aes_wrap.h \
-                    common.c \
                     common.h \
-                    build_config.h \
-                    os.h \
-                    os_unix.c \
-                    wpa_debug.c \
-                    wpa_debug.h \
-                    wpabuf.c \
-                    wpabuf.h \
-                    crypto.h \
-                    includes.h
-
+                    crypto.h
 
 
 libaes_la_CPPFLAGS = $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS) $(LIBGLIB_CFLAGS)

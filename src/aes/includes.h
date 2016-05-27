@@ -16,7 +16,7 @@
 #include "../../yacl.h"
 
 /* Include possible build time configuration before including anything else */
-#include "build_config.h"
+//#include "build_config.h"
 
 #include <stdlib.h>
 #include <stddef.h>
@@ -33,15 +33,5 @@
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif /* _MSC_VER */
-
-#ifndef CONFIG_NATIVE_WINDOWS
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#ifndef __vxworks
-#include <sys/uio.h>
-#include <sys/time.h>
-#endif /* __vxworks */
-#endif /* CONFIG_NATIVE_WINDOWS */
 
 #endif /* INCLUDES_H */
