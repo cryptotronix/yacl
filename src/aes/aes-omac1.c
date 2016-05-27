@@ -48,13 +48,10 @@ int omac1_aes_vector(const u8 *key, size_t key_len, size_t num_elem,
 	const u8 *pos, *end;
 	size_t i, e, left, total_len;
 
-	if (TEST_FAIL())
-		return -1;
-
 	ctx = aes_encrypt_init(key, key_len);
 	if (ctx == NULL)
 		return -1;
-	os_memset(cbc, 0, AES_BLOCK_SIZE);
+	memset(cbc, 0, AES_BLOCK_SIZE);
 
 	total_len = 0;
 	for (e = 0; e < num_elem; e++)
@@ -86,7 +83,7 @@ int omac1_aes_vector(const u8 *key, size_t key_len, size_t num_elem,
 		left -= AES_BLOCK_SIZE;
 	}
 
-	os_memset(pad, 0, AES_BLOCK_SIZE);
+	memset(pad, 0, AES_BLOCK_SIZE);
 	aes_encrypt(ctx, pad, pad);
 	gf_mulx(pad);
 

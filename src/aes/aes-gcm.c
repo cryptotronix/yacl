@@ -13,6 +13,30 @@
 #include "aes.h"
 #include "aes_wrap.h"
 
+static int
+os_memcmp_const(const void * const b1_, const void * const b2_, size_t len)
+{
+#ifdef HAVE_WEAK_SYMBOLS
+    const unsigned char *b1 = (const unsigned char *) b1_;
+    const unsigned char *b2 = (const unsigned char *) b2_;
+#else
+    const volatile unsigned char *volatile b1 =
+        (const volatile unsigned char * volatile) b1_;
+    const volatile unsigned char *volatile b2 =
+        (const volatile unsigned char * volatile) b2_;
+#endif
+    size_t               i;
+    unsigned char        d = (unsigned char) 0U;
+
+#if HAVE_WEAK_SYMBOLS
+    _sodium_dummy_symbol_to_prevent_memcmp_lto(b1, b2, len);
+#endif
+    for (i = 0U; i < len; i++) {
+        d |= b1[i] ^ b2[i];
+    }
+    return (1 & ((d - 1) >> 8)) - 1;
+}
+
 static void inc32(u8 *block)
 {
 	u32 val;
@@ -67,8 +91,8 @@ static void gf_mult(const u8 *x, const u8 *y, u8 *z)
 	u8 v[16];
 	int i, j;
 
-	os_memset(z, 0, 16); /* Z_0 = 0^128 */
-	os_memcpy(v, y, 16); /* V_0 = Y */
+	memset(z, 0, 16); /* Z_0 = 0^128 */
+	memcpy(v, y, 16); /* V_0 = Y */
 
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 8; j++) {
@@ -96,7 +120,7 @@ static void gf_mult(const u8 *x, const u8 *y, u8 *z)
 static void ghash_start(u8 *y)
 {
 	/* Y_0 = 0^128 */
-	os_memset(y, 0, 16);
+	memset(y, 0, 16);
 }
 
 
@@ -117,14 +141,14 @@ static void ghash(const u8 *h, const u8 *x, size_t xlen, u8 *y)
 		 * multiplication operation for binary Galois (finite) field of
 		 * 2^128 elements */
 		gf_mult(y, h, tmp);
-		os_memcpy(y, tmp, 16);
+		memcpy(y, tmp, 16);
 	}
 
 	if (x + xlen > xpos) {
 		/* Add zero padded last block */
 		size_t last = x + xlen - xpos;
-		os_memcpy(tmp, xpos, last);
-		os_memset(tmp + last, 0, sizeof(tmp) - last);
+		memcpy(tmp, xpos, last);
+		memset(tmp + last, 0, sizeof(tmp) - last);
 
 		/* Y_i = (Y^(i-1) XOR X_i) dot H */
 		xor_block(y, tmp);
@@ -133,7 +157,7 @@ static void ghash(const u8 *h, const u8 *x, size_t xlen, u8 *y)
 		 * multiplication operation for binary Galois (finite) field of
 		 * 2^128 elements */
 		gf_mult(y, h, tmp);
-		os_memcpy(y, tmp, 16);
+		memcpy(y, tmp, 16);
 	}
 
 	/* Return Y_m */
@@ -152,7 +176,7 @@ static void aes_gctr(void *aes, const u8 *icb, const u8 *x, size_t xlen, u8 *y)
 
 	n = xlen / 16;
 
-	os_memcpy(cb, icb, AES_BLOCK_SIZE);
+	memcpy(cb, icb, AES_BLOCK_SIZE);
 	/* Full blocks */
 	for (i = 0; i < n; i++) {
 		aes_encrypt(aes, cb, ypos);
@@ -181,7 +205,7 @@ static void * aes_gcm_init_hash_subkey(const u8 *key, size_t key_len, u8 *H)
 		return NULL;
 
 	/* Generate hash subkey H = AES_K(0^128) */
-	os_memset(H, 0, AES_BLOCK_SIZE);
+	memset(H, 0, AES_BLOCK_SIZE);
 	aes_encrypt(aes, H, H);
 	//wpa_hexdump_key(MSG_EXCESSIVE, "Hash subkey H for GHASH",
         //H, AES_BLOCK_SIZE);
@@ -195,8 +219,8 @@ static void aes_gcm_prepare_j0(const u8 *iv, size_t iv_len, const u8 *H, u8 *J0)
 
 	if (iv_len == 12) {
 		/* Prepare block J_0 = IV || 0^31 || 1 [len(IV) = 96] */
-		os_memcpy(J0, iv, iv_len);
-		os_memset(J0 + iv_len, 0, AES_BLOCK_SIZE - iv_len);
+		memcpy(J0, iv, iv_len);
+		memset(J0 + iv_len, 0, AES_BLOCK_SIZE - iv_len);
 		J0[AES_BLOCK_SIZE - 1] = 0x01;
 	} else {
 		/*
@@ -220,7 +244,7 @@ static void aes_gcm_gctr(void *aes, const u8 *J0, const u8 *in, size_t len,
 	if (len == 0)
 		return;
 
-	os_memcpy(J0inc, J0, AES_BLOCK_SIZE);
+	memcpy(J0inc, J0, AES_BLOCK_SIZE);
 	inc32(J0inc);
 	aes_gctr(aes, J0inc, in, len, out);
 }

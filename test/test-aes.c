@@ -25,6 +25,54 @@
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 
+static int hex2num(char c)
+{
+    if (c >= '0' && c <= '9')
+        return c - '0';
+    if (c >= 'a' && c <= 'f')
+        return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F')
+        return c - 'A' + 10;
+    return -1;
+}
+
+int hex2byte(const char *hex)
+{
+    int a, b;
+    a = hex2num(*hex++);
+    if (a < 0)
+        return -1;
+    b = hex2num(*hex++);
+    if (b < 0)
+        return -1;
+    return (a << 4) | b;
+}
+
+/**
+ * hexstr2bin - Convert ASCII hex string into binary data
+ * @hex: ASCII hex string (e.g., "01ab")
+ * @buf: Buffer for the binary data
+ * @len: Length of the text to convert in bytes (of buf); hex will be double
+ * this size
+ * Returns: 0 on success, -1 on failure (invalid hex string)
+ */
+int hexstr2bin(const char *hex, u8 *buf, size_t len)
+{
+    size_t i;
+    int a;
+    const char *ipos = hex;
+    u8 *opos = buf;
+
+    for (i = 0; i < len; i++) {
+        a = hex2byte(ipos);
+        if (a < 0)
+            return -1;
+        *opos++ = a;
+        ipos += 2;
+    }
+    return 0;
+}
+
 static void test_aes_perf(void)
 {
 #if 0 /* this did not seem to work with new compiler?! */
@@ -254,28 +302,28 @@ static int test_gcm(void)
 	for (i = 0; i < ARRAY_SIZE(gcm_tests); i++) {
 		const struct gcm_test_vector *tc = &gcm_tests[i];
 
-		k_len = os_strlen(tc->k) / 2;
+		k_len = strlen(tc->k) / 2;
 		if (hexstr2bin(tc->k, k, k_len)) {
 			printf("Invalid GCM test vector %d (k)\n", i);
 			ret++;
 			continue;
 		}
 
-		p_len = os_strlen(tc->p) / 2;
+		p_len = strlen(tc->p) / 2;
 		if (hexstr2bin(tc->p, p, p_len)) {
 			printf("Invalid GCM test vector %d (p)\n", i);
 			ret++;
 			continue;
 		}
 
-		aad_len = os_strlen(tc->aad) / 2;
+		aad_len = strlen(tc->aad) / 2;
 		if (hexstr2bin(tc->aad, aad, aad_len)) {
 			printf("Invalid GCM test vector %d (aad)\n", i);
 			ret++;
 			continue;
 		}
 
-		iv_len = os_strlen(tc->iv) / 2;
+		iv_len = strlen(tc->iv) / 2;
 		if (hexstr2bin(tc->iv, iv, iv_len)) {
 			printf("Invalid GCM test vector %d (iv)\n", i);
 			ret++;
@@ -322,12 +370,12 @@ static int test_gcm(void)
 
                 }
 
-		if (os_memcmp(c, tmp, p_len) != 0) {
+		if (memcmp(c, tmp, p_len) != 0) {
 			printf("GCM-AE mismatch (test case %d)\n", i);
 			ret++;
 		}
 
-		if (os_memcmp(tag, t, sizeof(tag)) != 0) {
+		if (memcmp(tag, t, sizeof(tag)) != 0) {
 			printf("GCM-AE tag mismatch (test case %d)\n", i);
 			ret++;
 		}
@@ -340,7 +388,7 @@ static int test_gcm(void)
 				continue;
 			}
 
-			if (os_memcmp(tag, t, sizeof(tag)) != 0) {
+			if (memcmp(tag, t, sizeof(tag)) != 0) {
 				printf("GMAC tag mismatch (test case %d)\n", i);
 				ret++;
 			}
@@ -357,7 +405,7 @@ static int test_gcm(void)
                     printf ("uyup\n");
                 }
 
-		if (os_memcmp(p, tmp, p_len) != 0) {
+		if (memcmp(p, tmp, p_len) != 0) {
 			printf("GCM-AD mismatch (test case %d)\n", i);
 			ret++;
 		}
@@ -388,7 +436,7 @@ static int test_nist_key_wrap_ae(const char *fname)
 	while (fgets(buf, sizeof(buf), f)) {
 		if (buf[0] == '#')
 			continue;
-		pos = os_strchr(buf, '=');
+		pos = strchr(buf, '=');
 		if (pos == NULL)
 			continue;
 		pos2 = pos - 1;
@@ -397,25 +445,25 @@ static int test_nist_key_wrap_ae(const char *fname)
 		*pos++ = '\0';
 		while (*pos == ' ')
 			*pos++ = '\0';
-		pos2 = os_strchr(pos, '\r');
+		pos2 = strchr(pos, '\r');
 		if (!pos2)
-			pos2 = os_strchr(pos, '\n');
+			pos2 = strchr(pos, '\n');
 		if (pos2)
 			*pos2 = '\0';
 		else
-			pos2 = pos + os_strlen(pos);
+			pos2 = pos + strlen(pos);
 
 		if (buf[0] == '[') {
 			printf("%s = %s\n", buf, pos);
 			continue;
 		}
 
-		if (os_strcmp(buf, "COUNT") == 0) {
+		if (strcmp(buf, "COUNT") == 0) {
 			printf("Test %s - ", pos);
 			continue;
 		}
 
-		bin_len = os_strlen(pos);
+		bin_len = strlen(pos);
 		if (bin_len > sizeof(bin) * 2) {
 			printf("Too long binary data (%s)\n", buf);
 			return 1;
@@ -431,27 +479,27 @@ static int test_nist_key_wrap_ae(const char *fname)
 			return 1;
 		}
 
-		if (os_strcmp(buf, "K") == 0) {
+		if (strcmp(buf, "K") == 0) {
 			if (bin_len > sizeof(k)) {
 				printf("Too long K (%u)\n", (unsigned) bin_len);
 				return 1;
 			}
-			os_memcpy(k, bin, bin_len);
+			memcpy(k, bin, bin_len);
 			k_len = bin_len;
 			continue;
 		}
 
-		if (os_strcmp(buf, "P") == 0) {
+		if (strcmp(buf, "P") == 0) {
 			if (bin_len > sizeof(p)) {
 				printf("Too long P (%u)\n", (unsigned) bin_len);
 				return 1;
 			}
-			os_memcpy(p, bin, bin_len);
+			memcpy(p, bin, bin_len);
 			p_len = bin_len;
 			continue;
 		}
 
-		if (os_strcmp(buf, "C") != 0) {
+		if (strcmp(buf, "C") != 0) {
 			printf("Unexpected field '%s'\n", buf);
 			continue;
 		}
@@ -460,7 +508,7 @@ static int test_nist_key_wrap_ae(const char *fname)
 			printf("Too long C (%u)\n", (unsigned) bin_len);
 			return 1;
 		}
-		os_memcpy(c, bin, bin_len);
+		memcpy(c, bin, bin_len);
 		c_len = bin_len;
 
 		if (p_len % 8 != 0 || c_len % 8 != 0 || c_len - p_len != 8) {
@@ -475,7 +523,7 @@ static int test_nist_key_wrap_ae(const char *fname)
 			continue;
 		}
 
-		if (os_memcmp(c, result, c_len) == 0) {
+		if (memcmp(c, result, c_len) == 0) {
 			printf("OK\n");
 			ok++;
 		} else {
@@ -518,9 +566,9 @@ static int test_nist_key_wrap_ad(const char *fname)
 		if (buf[0] == '#')
 			continue;
 		fail = 0;
-		pos = os_strchr(buf, '=');
+		pos = strchr(buf, '=');
 		if (pos == NULL) {
-			if (os_strncmp(buf, "FAIL", 4) == 0) {
+			if (strncmp(buf, "FAIL", 4) == 0) {
 				fail = 1;
 				goto skip_val_parse;
 			}
@@ -532,25 +580,25 @@ static int test_nist_key_wrap_ad(const char *fname)
 		*pos++ = '\0';
 		while (*pos == ' ')
 			*pos++ = '\0';
-		pos2 = os_strchr(pos, '\r');
+		pos2 = strchr(pos, '\r');
 		if (!pos2)
-			pos2 = os_strchr(pos, '\n');
+			pos2 = strchr(pos, '\n');
 		if (pos2)
 			*pos2 = '\0';
 		else
-			pos2 = pos + os_strlen(pos);
+			pos2 = pos + strlen(pos);
 
 		if (buf[0] == '[') {
 			printf("%s = %s\n", buf, pos);
 			continue;
 		}
 
-		if (os_strcmp(buf, "COUNT") == 0) {
+		if (strcmp(buf, "COUNT") == 0) {
 			printf("Test %s - ", pos);
 			continue;
 		}
 
-		bin_len = os_strlen(pos);
+		bin_len = strlen(pos);
 		if (bin_len > sizeof(bin) * 2) {
 			printf("Too long binary data (%s)\n", buf);
 			return 1;
@@ -566,29 +614,29 @@ static int test_nist_key_wrap_ad(const char *fname)
 			return 1;
 		}
 
-		if (os_strcmp(buf, "K") == 0) {
+		if (strcmp(buf, "K") == 0) {
 			if (bin_len > sizeof(k)) {
 				printf("Too long K (%u)\n", (unsigned) bin_len);
 				return 1;
 			}
-			os_memcpy(k, bin, bin_len);
+			memcpy(k, bin, bin_len);
 			k_len = bin_len;
 			continue;
 		}
 
-		if (os_strcmp(buf, "C") == 0) {
+		if (strcmp(buf, "C") == 0) {
 			if (bin_len > sizeof(c)) {
 				printf("Too long C (%u)\n", (unsigned) bin_len);
 				return 1;
 			}
-			os_memcpy(c, bin, bin_len);
+			memcpy(c, bin, bin_len);
 			c_len = bin_len;
 			continue;
 		}
 
 	skip_val_parse:
 		if (!fail) {
-			if (os_strcmp(buf, "P") != 0) {
+			if (strcmp(buf, "P") != 0) {
 				printf("Unexpected field '%s'\n", buf);
 				continue;
 			}
@@ -597,7 +645,7 @@ static int test_nist_key_wrap_ad(const char *fname)
 				printf("Too long P (%u)\n", (unsigned) bin_len);
 				return 1;
 			}
-			os_memcpy(p, bin, bin_len);
+			memcpy(p, bin, bin_len);
 			p_len = bin_len;
 
 			if (p_len % 8 != 0 || c_len % 8 != 0 ||
@@ -622,7 +670,7 @@ static int test_nist_key_wrap_ad(const char *fname)
 		if (fail) {
 			printf("FAIL (mismatch not reported)\n");
 			ret++;
-		} else if (os_memcmp(p, result, p_len) == 0) {
+		} else if (memcmp(p, result, p_len) == 0) {
 			printf("OK\n");
 			ok++;
 		} else {
@@ -646,9 +694,9 @@ int main(int argc, char *argv[])
 {
 	int ret = 0;
 
-	if (argc >= 3 && os_strcmp(argv[1], "NIST-KW-AE") == 0)
+	if (argc >= 3 && strcmp(argv[1], "NIST-KW-AE") == 0)
 		ret += test_nist_key_wrap_ae(argv[2]);
-	else if (argc >= 3 && os_strcmp(argv[1], "NIST-KW-AD") == 0)
+	else if (argc >= 3 && strcmp(argv[1], "NIST-KW-AD") == 0)
 		ret += test_nist_key_wrap_ad(argv[2]);
 
 	test_aes_perf();

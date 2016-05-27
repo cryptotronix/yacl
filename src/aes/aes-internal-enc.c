@@ -99,12 +99,12 @@ void * aes_encrypt_init(const u8 *key, size_t len)
 {
 	u32 *rk;
 	int res;
-	rk = os_malloc(AES_PRIV_SIZE);
+	rk = malloc(AES_PRIV_SIZE);
 	if (rk == NULL)
 		return NULL;
 	res = rijndaelKeySetupEnc(rk, key, len * 8);
 	if (res < 0) {
-		os_free(rk);
+		free(rk);
 		return NULL;
 	}
 	rk[AES_PRIV_NR_POS] = res;
@@ -121,6 +121,6 @@ void aes_encrypt(void *ctx, const u8 *plain, u8 *crypt)
 
 void aes_encrypt_deinit(void *ctx)
 {
-	os_memset(ctx, 0, AES_PRIV_SIZE);
-	os_free(ctx);
+	memset(ctx, 0, AES_PRIV_SIZE);
+	free(ctx);
 }

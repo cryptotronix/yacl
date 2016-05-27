@@ -14,6 +14,30 @@
 #include "aes_wrap.h"
 
 
+static int
+os_memcmp_const(const void * const b1_, const void * const b2_, size_t len)
+{
+#ifdef HAVE_WEAK_SYMBOLS
+    const unsigned char *b1 = (const unsigned char *) b1_;
+    const unsigned char *b2 = (const unsigned char *) b2_;
+#else
+    const volatile unsigned char *volatile b1 =
+        (const volatile unsigned char * volatile) b1_;
+    const volatile unsigned char *volatile b2 =
+        (const volatile unsigned char * volatile) b2_;
+#endif
+    size_t               i;
+    unsigned char        d = (unsigned char) 0U;
+
+#if HAVE_WEAK_SYMBOLS
+    _sodium_dummy_symbol_to_prevent_memcmp_lto(b1, b2, len);
+#endif
+    for (i = 0U; i < len; i++) {
+        d |= b1[i] ^ b2[i];
+    }
+    return (1 & ((d - 1) >> 8)) - 1;
+}
+
 static void xor_aes_block(u8 *dst, const u8 *src)
 {
 	u32 *d = (u32 *) dst;
@@ -37,7 +61,7 @@ static void aes_ccm_auth_start(void *aes, size_t M, size_t L, const u8 *nonce,
 	b[0] = aad_len ? 0x40 : 0 /* Adata */;
 	b[0] |= (((M - 2) / 2) /* M' */ << 3);
 	b[0] |= (L - 1) /* L' */;
-	os_memcpy(&b[1], nonce, 15 - L);
+	memcpy(&b[1], nonce, 15 - L);
 	WPA_PUT_BE16(&b[AES_BLOCK_SIZE - L], plain_len);
 
 	//wpa_hexdump_key(MSG_EXCESSIVE, "CCM B_0", b, AES_BLOCK_SIZE);
@@ -47,8 +71,8 @@ static void aes_ccm_auth_start(void *aes, size_t M, size_t L, const u8 *nonce,
 		return;
 
 	WPA_PUT_BE16(aad_buf, aad_len);
-	os_memcpy(aad_buf + 2, aad, aad_len);
-	os_memset(aad_buf + 2 + aad_len, 0, sizeof(aad_buf) - 2 - aad_len);
+	memcpy(aad_buf + 2, aad, aad_len);
+	memset(aad_buf + 2 + aad_len, 0, sizeof(aad_buf) - 2 - aad_len);
 
 	xor_aes_block(aad_buf, x);
 	aes_encrypt(aes, aad_buf, x); /* X_2 = E(K, X_1 XOR B_1) */
@@ -85,7 +109,7 @@ static void aes_ccm_encr_start(size_t L, const u8 *nonce, u8 *a)
 {
 	/* A_i = Flags | Nonce N | Counter i */
 	a[0] = L - 1; /* Flags = L' */
-	os_memcpy(&a[1], nonce, 15 - L);
+	memcpy(&a[1], nonce, 15 - L);
 }
 
 

@@ -5,9 +5,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 lib_LTLIBRARIES = libaes.la
 
 libaes_la_SOURCES = aes-cbc.c \
-                    aes-ccm.c \
                     aes-ctr.c \
-                    aes-eax.c \
                     aes-encblock.c \
                     aes-gcm.c \
                     aes.h \
@@ -16,8 +14,6 @@ libaes_la_SOURCES = aes-cbc.c \
                     aes-internal-dec.c \
                     aes-internal-enc.c \
                     aes-omac1.c \
-                    aes-siv.c \
-                    aes_siv.h \
                     aes-unwrap.c \
                     aes-wrap.c \
                     aes_wrap.h \

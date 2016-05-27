@@ -53,8 +53,8 @@ static void xorend(u8 *a, int alen, const u8 *b, int blen)
 
 static void pad_block(u8 *pad, const u8 *addr, size_t len)
 {
-	os_memset(pad, 0, AES_BLOCK_SIZE);
-	os_memcpy(pad, addr, len);
+	memset(pad, 0, AES_BLOCK_SIZE);
+	memcpy(pad, addr, len);
 
 	if (len < AES_BLOCK_SIZE)
 		pad[len] = 0x80;
@@ -70,7 +70,7 @@ static int aes_s2v(const u8 *key, size_t num_elem, const u8 *addr[],
 	size_t i;
 
 	if (!num_elem) {
-		os_memcpy(tmp, zero, sizeof(zero));
+		memcpy(tmp, zero, sizeof(zero));
 		tmp[AES_BLOCK_SIZE - 1] = 1;
 		return omac1_aes_128(key, tmp, sizeof(tmp), mac);
 	}
@@ -88,11 +88,11 @@ static int aes_s2v(const u8 *key, size_t num_elem, const u8 *addr[],
 		xor(tmp, tmp2);
 	}
 	if (len[i] >= AES_BLOCK_SIZE) {
-		buf = os_malloc(len[i]);
+		buf = malloc(len[i]);
 		if (!buf)
 			return -ENOMEM;
 
-		os_memcpy(buf, addr[i], len[i]);
+		memcpy(buf, addr[i], len[i]);
 		xorend(buf, len[i], tmp, AES_BLOCK_SIZE);
 		ret = omac1_aes_128(key, buf, len[i], mac);
 		bin_clear_free(buf, len[i]);
@@ -134,8 +134,8 @@ int aes_siv_encrypt(const u8 *key, const u8 *pw,
 	iv = out;
 	crypt_pw = out + AES_BLOCK_SIZE;
 
-	os_memcpy(iv, v, AES_BLOCK_SIZE);
-	os_memcpy(crypt_pw, pw, pwlen);
+	memcpy(iv, v, AES_BLOCK_SIZE);
+	memcpy(crypt_pw, pw, pwlen);
 
 	/* zero out 63rd and 31st bits of ctr (from right) */
 	v[8] &= 0x7f;
@@ -168,8 +168,8 @@ int aes_siv_decrypt(const u8 *key, const u8 *iv_crypt, size_t iv_c_len,
 	_addr[num_elem] = out;
 	_len[num_elem] = crypt_len;
 
-	os_memcpy(iv, iv_crypt, AES_BLOCK_SIZE);
-	os_memcpy(out, iv_crypt + AES_BLOCK_SIZE, crypt_len);
+	memcpy(iv, iv_crypt, AES_BLOCK_SIZE);
+	memcpy(out, iv_crypt + AES_BLOCK_SIZE, crypt_len);
 
 	iv[8] &= 0x7f;
 	iv[12] &= 0x7f;
@@ -181,7 +181,7 @@ int aes_siv_decrypt(const u8 *key, const u8 *iv_crypt, size_t iv_c_len,
 	ret = aes_s2v(k1, num_elem + 1, _addr, _len, check);
 	if (ret)
 		return ret;
-	if (os_memcmp(check, iv_crypt, AES_BLOCK_SIZE) == 0)
+	if (memcmp(check, iv_crypt, AES_BLOCK_SIZE) == 0)
 		return 0;
 
 	return -1;
