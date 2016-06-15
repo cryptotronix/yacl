@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #ifdef YACL_STATIC
 # define YACL_EXPORT
@@ -22,6 +23,10 @@ yacl_init (void);
 YACL_EXPORT
 int
 yacl_sha256 (const uint8_t *in, size_t len, uint8_t out[YACL_SHA256_LEN]);
+
+YACL_EXPORT
+int
+yacl_sha256_file (FILE *fp, uint8_t *out);
 
 YACL_EXPORT
 int
@@ -68,7 +73,7 @@ yacl_hkdf_256_expand(const uint8_t prk[ ], int prk_len,
  *          information.  (Ignored if info == NULL.)
  *      okm[ ]: [out]
  *          Where the HKDF is to be stored.
- *      okm_len: [in]
+ *      okm_len: [in]pal
  *          The length of the buffer to hold okm.
  *          okm_len must be <= 255 * USHABlockSize(whichSha)
  *
@@ -148,24 +153,46 @@ yacl_aes_unwrap(const uint8_t *kek, size_t kek_len,
 #define crypto_aead_aes256gcm_KEYBYTES 32
 #endif
 
+#ifndef crypto_aead_aes128gcm_KEYBYTES
+#define crypto_aead_aes128gcm_KEYBYTES 16
+#endif
+
 
 YACL_EXPORT
 int
-yacl_aes_gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
-                     const uint8_t *aad, size_t aad_len,
-                     const uint8_t *key, size_t key_len,
-                     const uint8_t *nonce, size_t nonce_len,
-                     uint8_t *tag, size_t tag_len,
-                     uint8_t *ciphertext, size_t c_len);
+yacl_aes256gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
+                       const uint8_t *aad, size_t aad_len,
+                       const uint8_t *key, size_t key_len,
+                       const uint8_t *nonce, size_t nonce_len,
+                       uint8_t *tag, size_t tag_len,
+                       uint8_t *ciphertext, size_t c_len);
 
 YACL_EXPORT
 int
-yacl_aes_gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
-                     const uint8_t *aad, size_t aad_len,
-                     const uint8_t *key, size_t key_len,
-                     const uint8_t *nonce, size_t nonce_len,
-                     const uint8_t *tag, size_t tag_len,
-                     uint8_t *plaintext, size_t plaintextlen);
+yacl_aes256gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
+                       const uint8_t *aad, size_t aad_len,
+                       const uint8_t *key, size_t key_len,
+                       const uint8_t *nonce, size_t nonce_len,
+                       const uint8_t *tag, size_t tag_len,
+                       uint8_t *plaintext, size_t plaintextlen);
+
+YACL_EXPORT
+int
+yacl_aes128gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
+                       const uint8_t *aad, size_t aad_len,
+                       const uint8_t *key, size_t key_len,
+                       const uint8_t *nonce, size_t nonce_len,
+                       uint8_t *tag, size_t tag_len,
+                       uint8_t *ciphertext, size_t c_len);
+
+YACL_EXPORT
+int
+yacl_aes128gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
+                       const uint8_t *aad, size_t aad_len,
+                       const uint8_t *key, size_t key_len,
+                       const uint8_t *nonce, size_t nonce_len,
+                       const uint8_t *tag, size_t tag_len,
+                       uint8_t *plaintext, size_t plaintextlen);
 /* --- Base64 URL --- */
 YACL_EXPORT
 char *

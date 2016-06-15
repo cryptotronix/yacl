@@ -1,3 +1,8 @@
+Noteworthy changes in version 1.1 (Wednesday, 15 June 2016)
+----------------------------------------------------
+  * Adds AES GCM 128.
+  * Adds test vectors for AES GCM 128.
+
 Noteworthy changes in version 0.3 (Tuesday, 29 Sep 2015)
 ----------------------------------------------------
   * Exposes ecdh call

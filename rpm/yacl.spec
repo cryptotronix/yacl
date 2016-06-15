@@ -5,12 +5,12 @@
 %define _libdir %{_prefix}/lib64
 
 Name: yacl
-Version: 1.0.0
+Version: 1.1.0
 Release: 0
 Summary: yacl library
 License: see %{pkgdocdir}/copyright
 
-%define packagebase yacl-1.0.0
+%define packagebase yacl-1.1.0
 
 Group: System Environment/Libraries
 Source: %{packagebase}.tar.gz
@@ -70,7 +70,7 @@ make install-strip DESTDIR=%{buildroot}
 %defattr( -, root, root )
 #%define _prefix /
 /usr/lib64/pkgconfig/yacl.pc
-/usr/include/yacl-1.0/*
+/usr/include/yacl-1.1/*
 /usr/lib64/*.so
 /usr/lib64/*.so.*
 /usr/share/guile/site/2.0/cryptotronix/*

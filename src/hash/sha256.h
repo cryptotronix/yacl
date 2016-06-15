@@ -64,9 +64,12 @@ struct sha256_state {
 	u8 buf[SHA256_BLOCK_SIZE];
 };
 
+YACL_EXPORT
 void sha256_init(struct sha256_state *md);
+YACL_EXPORT
 int sha256_process(struct sha256_state *md, const unsigned char *in,
 		   unsigned long inlen);
+YACL_EXPORT
 int sha256_done(struct sha256_state *md, unsigned char *out);
 int sha256_vector(size_t num_elem, const u8 *addr[], const size_t *len,
 		  u8 *mac);

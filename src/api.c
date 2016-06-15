@@ -170,25 +170,25 @@ yacl_aes_unwrap(const uint8_t *kek, size_t kek_len,
 
 
 int
-yacl_aes_gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
-                     const uint8_t *aad, size_t aad_len,
-                     const uint8_t *key, size_t key_len,
-                     const uint8_t *nonce, size_t nonce_len,
-                     uint8_t *tag, size_t tag_len,
-                     uint8_t *ciphertext, size_t c_len)
+yacl_aes256gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
+                       const uint8_t *aad, size_t aad_len,
+                       const uint8_t *key, size_t key_len,
+                       const uint8_t *nonce, size_t nonce_len,
+                       uint8_t *tag, size_t tag_len,
+                       uint8_t *ciphertext, size_t c_len)
 
 {
   if (crypto_aead_aes256gcm_NPUBBYTES != nonce_len)
     return -1;
 
   if (plaintext_len != c_len)
-    return -1;
+    return -2;
 
   if (crypto_aead_aes256gcm_KEYBYTES != key_len)
-    return -1;
+    return -3;
 
   if (crypto_aead_aes256gcm_ABYTES != tag_len)
-    return -1;
+    return -4;
 
 #if defined HAVE_LIBSODIUM && defined HAVE_SODIUM_GCM && defined HAVE_SODIUM_GCM_ENCRYPT
 
@@ -218,24 +218,24 @@ yacl_aes_gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
 
 
 int
-yacl_aes_gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
-                     const uint8_t *aad, size_t aad_len,
-                     const uint8_t *key, size_t key_len,
-                     const uint8_t *nonce, size_t nonce_len,
-                     const uint8_t *tag, size_t tag_len,
-                     uint8_t *plaintext, size_t plaintext_len)
+yacl_aes256gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
+                       const uint8_t *aad, size_t aad_len,
+                       const uint8_t *key, size_t key_len,
+                       const uint8_t *nonce, size_t nonce_len,
+                       const uint8_t *tag, size_t tag_len,
+                       uint8_t *plaintext, size_t plaintext_len)
 {
   if (crypto_aead_aes256gcm_NPUBBYTES != nonce_len)
     return -1;
 
   if (plaintext_len != ciphertext_len)
-    return -1;
+    return -2;
 
   if (crypto_aead_aes256gcm_KEYBYTES != key_len)
-    return -1;
+    return -3;
 
   if (crypto_aead_aes256gcm_ABYTES != tag_len)
-    return -1;
+    return -4;
 
 #if defined HAVE_LIBSODIUM && defined HAVE_SODIUM_GCM && defined HAVE_SODIUM_GCM_DECRYPT
   if (crypto_aead_aes256gcm_is_available())
@@ -258,4 +258,87 @@ yacl_aes_gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
                     aad, aad_len,
                     tag,
                     plaintext);
+}
+
+int
+yacl_aes128gcm_encrypt(const uint8_t *plaintext, size_t plaintext_len,
+                       const uint8_t *aad, size_t aad_len,
+                       const uint8_t *key, size_t key_len,
+                       const uint8_t *nonce, size_t nonce_len,
+                       uint8_t *tag, size_t tag_len,
+                       uint8_t *ciphertext, size_t c_len)
+
+{
+  if (crypto_aead_aes256gcm_NPUBBYTES != nonce_len)
+    return -1;
+
+  if (plaintext_len != c_len)
+    return -2;
+
+  if (crypto_aead_aes128gcm_KEYBYTES != key_len)
+    return -3;
+
+  if (crypto_aead_aes256gcm_ABYTES != tag_len)
+    return -4;
+
+  return aes_gcm_ae(key, key_len,
+                    nonce, nonce_len,
+                    plaintext, plaintext_len,
+                    aad, aad_len,
+                    ciphertext,
+                    tag);
+
+}
+
+
+int
+yacl_aes128gcm_decrypt(const uint8_t *ciphertext, size_t ciphertext_len,
+                       const uint8_t *aad, size_t aad_len,
+                       const uint8_t *key, size_t key_len,
+                       const uint8_t *nonce, size_t nonce_len,
+                       const uint8_t *tag, size_t tag_len,
+                       uint8_t *plaintext, size_t plaintext_len)
+{
+  if (crypto_aead_aes256gcm_NPUBBYTES != nonce_len)
+    return -1;
+
+  if (plaintext_len != ciphertext_len)
+    return -2;
+
+  if (crypto_aead_aes128gcm_KEYBYTES != key_len)
+    return -3;
+
+  if (crypto_aead_aes256gcm_ABYTES != tag_len)
+    return -4;
+
+  return aes_gcm_ad(key, key_len,
+                    nonce, nonce_len,
+                    ciphertext, ciphertext_len,
+                    aad, aad_len,
+                    tag,
+                    plaintext);
+}
+
+
+int
+yacl_sha256_file (FILE *fp, uint8_t *out)
+{
+  struct sha256_state state;
+  sha256_init(&state);
+
+  int c;
+  int rc = -1;
+  /* Perform the hash */
+  while ((c = getc (fp)) != EOF)
+    {
+      rc = sha256_process (&state, &c, sizeof c);
+      if (rc) goto OUT;
+    }
+
+  sha256_done (&state, out);
+
+  rc = 0;
+ OUT:
+  return rc;
+
 }

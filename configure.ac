@@ -1,6 +1,6 @@
 # Copyright (C) 2014 Cryptotronix, LLC.
 
-AC_INIT([yacl], [1.0.0], [bugs@cryptotronix.com], [yacl],
+AC_INIT([yacl], [1.1.0], [bugs@cryptotronix.com], [yacl],
         [https://github.com/cryptotronix/yacl])
 AC_PREREQ([2.59])
 AC_USE_SYSTEM_EXTENSIONS
@@ -20,7 +20,7 @@ AM_PROG_AR
 
 AC_PROG_MKDIR_P
 
-AC_SUBST([YACL_SO_VERSION], [7:0:0])
+AC_SUBST([YACL_SO_VERSION], [8:0:0])
 #                            | | |
 #                     +------+ | +---+
 #                     |        |     |
@@ -32,7 +32,7 @@ AC_SUBST([YACL_SO_VERSION], [7:0:0])
 #                     |        +- increment if source code has changed
 #                     |           set to zero if current is incremented
 #                     +- increment if interfaces have been added, removed or changed
-AC_SUBST([YACL_API_VERSION], [1.0])
+AC_SUBST([YACL_API_VERSION], [1.1])
 
 # uECC settings
 AC_DEFINE([uECC_CURVE], [uECC_secp256r1], [Use secp256r1 P-256])
