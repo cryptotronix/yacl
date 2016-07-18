@@ -1,6 +1,6 @@
 # Copyright (C) 2014 Cryptotronix, LLC.
 
-AC_INIT([yacl], [1.1.0], [bugs@cryptotronix.com], [yacl],
+AC_INIT([yacl], [1.1.1], [bugs@cryptotronix.com], [yacl],
         [https://github.com/cryptotronix/yacl])
 AC_PREREQ([2.59])
 AC_USE_SYSTEM_EXTENSIONS
@@ -99,13 +99,14 @@ AS_IF([test "x$with_libsodium" = "xyes"], [
 
 ])
 
-AS_IF([test "x$with_guile" = "xyes"], [
-# Guile Extensions
-PKG_CHECK_MODULES([GUILE], [guile-2.0])
-GUILE_PROGS
-GUILE_FLAGS
-GUILE_SITE_DIR
-])
+dnl AS_IF([test "x$with_guile" = "xyes"], [
+dnl # Guile Extensions
+dnl echo "Checking for guile extensions"
+dnl PKG_CHECK_MODULES([GUILE], [guile-2.0])
+dnl GUILE_PROGS
+dnl GUILE_FLAGS
+dnl GUILE_SITE_DIR
+dnl ])
 
 AC_ARG_ENABLE([arm-asm],
         AS_HELP_STRING([--enable-arm-asm], [Build with arm asm]))
@@ -633,7 +634,9 @@ gl_LD_OUTPUT_DEF
 # Override the template file name of the generated .pc file, so that there
 # is no need to rename the template file when the API version changes.
 AC_CONFIG_FILES([Makefile test/Makefile src/aes/Makefile \
-                 src/guile/Makefile yacl.pc:yacl.pc.in])
+                 yacl.pc:yacl.pc.in])
+
+# src/guile/Makefile
 
 AC_OUTPUT
 

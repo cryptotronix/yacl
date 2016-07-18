@@ -18,7 +18,8 @@ libaes_la_SOURCES = aes-cbc.c \
                     aes-wrap.c \
                     aes_wrap.h \
                     common.h \
-                    crypto.h
+                    crypto.h \
+                    includes.h
 
 
 libaes_la_CPPFLAGS = $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS) $(LIBGLIB_CFLAGS)
