@@ -5,10 +5,10 @@ compiler:
   - gcc
 # Change this to your needs
 before_install:
-  - sudo apt-get install check gnulib guile-2.0 guile-2.0-dev -y
+  - sudo apt-get install check gnulib guile-2.0 guile-2.0-dev libglib2.0-dev -y
 
 script:
   - ./autogen.sh
-  - ./configure --with-guile
+  - ./configure --with-libglib --enable-tests
   - make
   - make check
