@@ -63,8 +63,10 @@ endif
 # ETAGS_ARGS = $(SCM_SOURCES)
 # endif
 
-libyacl_la_CPPFLAGS = $(DEPS_CFLAGS) $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS) $(LIBGLIB_CFLAGS)
-libyacl_la_LIBADD = $(DEPS_LIBS) $(GUILE_LIBS) $(LIBSODIUM_LIBS) $(LIBGLIB_LIBS) src/aes/libaes.la
+libyacl_la_CPPFLAGS = $(DEPS_CFLAGS) $(GUILE_CFLAGS) $(LIBSODIUM_CFLAGS) \
+	$(LIBGLIB_CFLAGS)
+libyacl_la_LIBADD = $(DEPS_LIBS) $(GUILE_LIBS) $(LIBSODIUM_LIBS) \
+	$(LIBGLIB_LIBS) src/aes/libaes.la
 
 
 libyacl_la_LDFLAGS = -version-info $(YACL_SO_VERSION) -release $(YACL_API_VERSION)
