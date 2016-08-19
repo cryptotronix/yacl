@@ -99,14 +99,14 @@ AS_IF([test "x$with_libsodium" = "xyes"], [
 
 ])
 
-dnl AS_IF([test "x$with_guile" = "xyes"], [
-dnl # Guile Extensions
-dnl echo "Checking for guile extensions"
-dnl PKG_CHECK_MODULES([GUILE], [guile-2.0])
-dnl GUILE_PROGS
-dnl GUILE_FLAGS
-dnl GUILE_SITE_DIR
-dnl ])
+AS_IF([test "x$with_guile" = "xyes"], [
+# Guile Extensions
+echo "Checking for guile extensions"
+PKG_CHECK_MODULES([GUILE], [guile-2.0])
+GUILE_PROGS
+GUILE_FLAGS
+GUILE_SITE_DIR
+])
 
 AC_ARG_ENABLE([arm-asm],
         AS_HELP_STRING([--enable-arm-asm], [Build with arm asm]))
