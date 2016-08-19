@@ -5,12 +5,12 @@
 %define _libdir %{_prefix}/lib64
 
 Name: yacl
-Version: 1.1.0
+Version: 1.1.1
 Release: 0
 Summary: yacl library
 License: see %{pkgdocdir}/copyright
 
-%define packagebase yacl-1.1.0
+%define packagebase yacl-1.1.1
 
 Group: System Environment/Libraries
 Source: %{packagebase}.tar.gz
