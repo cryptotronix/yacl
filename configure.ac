@@ -633,7 +633,7 @@ gl_LD_OUTPUT_DEF
 
 # Override the template file name of the generated .pc file, so that there
 # is no need to rename the template file when the API version changes.
-AC_CONFIG_FILES([Makefile test/Makefile src/aes/Makefile \
+AC_CONFIG_FILES([Makefile test/Makefile src/aes/Makefile src/guile/Makefile \
                  yacl.pc:yacl.pc.in])
 
 # src/guile/Makefile
