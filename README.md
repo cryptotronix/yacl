@@ -21,19 +21,26 @@ These algorithms are:
 
 # Getting yacl
 
-On Ubuntu:
-Check the [Cryptotronix PPA](https://launchpad.net/~cryptotronix/+archive/ubuntu/ppa).
-
 Otherwise, probably best to pull the latest
 [release](https://github.com/cryptotronix/yacl/releases). Otherwise,
 you'll need autotools to build this from source. It follows the normal
 autotools dance.
 
+# Configuring yacl
+
+On a full-up-round linux system, I configure yacl like this:
+`./configure --with-libglib -with-guile --with-libsodium
+--enable-tests`
+
+On a debian-based system, you'd probably have to do:
+
+`apt install build-essential libsodium-dev guile-2.0-dev libglib2.0-dev`
+
 
 # Installing yacl
 
 yacl can be installed in the normal fashion, with `sudo make
-install`. I probably should make a .deb out of this to make it
+install && sudo ldconfig`. I probably should make a .deb out of this to make it
 easier...
 
 # Using yacl
